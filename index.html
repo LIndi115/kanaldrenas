@@ -1,148 +1,80 @@
+
 <!DOCTYPE html>
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRENICA SOT | Lajmet e fundit</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-    
+    <title>PANELI ADMIN - DRENICA SOT</title>
     <style>
-        :root {
-            --red: #ff0000;
-            --black: #000000;
-            --gray: #111111;
-            --glass: rgba(255, 255, 255, 0.05);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-        body { background-color: var(--black); color: white; overflow-x: hidden; }
-
-        /* Navigation */
-        nav {
-            background: rgba(0, 0, 0, 0.95);
-            padding: 15px 5%;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--red);
-            position: sticky; top: 0; z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-        .logo { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: white; text-decoration: none; text-transform: uppercase; }
-        .logo span { color: var(--red); text-shadow: 0 0 15px var(--red); }
-
-        /* Lajmet lëvizëse */
-        .ticker { background: var(--red); color: black; font-weight: 900; padding: 8px 0; text-transform: uppercase; font-size: 0.8rem; }
-
-        /* Bento Grid */
-        .main-container { padding: 30px 5%; max-width: 1400px; margin: 0 auto; }
-        .bento-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            grid-auto-rows: 250px;
-            gap: 15px; 
-        }
-
-        .bento-item {
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            transition: 0.4s;
-        }
-        
-        .large { grid-column: span 2; grid-row: span 2; }
-        .tall { grid-row: span 2; }
-        .wide { grid-column: span 2; }
-
-        .bento-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: 0.5s; }
-        .bento-item:hover img { opacity: 0.9; transform: scale(1.05); }
-
-        .content {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.95));
-        }
-        .tag { background: var(--red); color: white; padding: 4px 10px; font-size: 0.6rem; font-weight: 900; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
-        h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; line-height: 1.2; color: white; }
-        .large h2 { font-size: 2rem; }
-
-        /* KODI QË RREGULLON TELEFONIN */
-        @media (max-width: 768px) {
-            .bento-grid { 
-                display: flex; 
-                flex-direction: column; 
-            }
-            .bento-item, .large, .tall, .wide { 
-                width: 100%; 
-                height: 350px !important; 
-                min-height: 350px;
-            }
-            .large h2 { font-size: 1.5rem; }
-            .main-container { padding: 15px 3%; }
-        }
-
-        footer { padding: 40px; text-align: center; color: #444; font-size: 0.8rem; border-top: 1px solid #111; margin-top: 50px; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .admin-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 6px solid #d32f2f; }
+        h2 { color: #d32f2f; text-align: center; margin-bottom: 25px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background-color: #d32f2f; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background-color: #b71c1c; }
+        .success-msg { color: green; text-align: center; display: none; margin-top: 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <nav>
-        <a href="#" class="logo">DRENICA<span>SOT</span></a>
-    </nav>
+    <div class="admin-box">
+        <h2>Shto Lajm të Ri</h2>
+        
+        <label>Titulli i Lajmit</label>
+        <input type="text" id="titulli" placeholder="Shkruaj titullin këtu...">
 
-    <div class="ticker">
-        <marquee scrollamount="7">LAJMET E FUNDIT: INVESTIME TË REJA NË SKENDERAJ — KF DRENICA GATI PËR DERBIN — MOTI: FRESKËT GJATË NATËS</marquee>
+        <label>Linku i Fotos (URL)</label>
+        <input type="text" id="fotoUrl" placeholder="Ngjit linkun e fotos (p.sh. nga Google)...">
+
+        <label>Përshkrimi i Lajmit</label>
+        <textarea id="pershkrimi" rows="5" placeholder="Shkruaj detajet e lajmit..."></textarea>
+
+        <button id="btnPosto">POSTO LAJMIN LIVE</button>
+        <p id="msg" class="success-msg">Lajmi u postua me sukses!</p>
     </div>
 
-    <main class="main-container">
-        <div class="bento-grid">
-            
-            <div class="bento-item large">
-                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 1">
-                <div class="content">
-                    <span class="tag">KRYESORE</span>
-                    <h2>Transformimi i Drenicës: Projektet e Reja për vitin 2026</h2>
-                </div>
-            </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-            <div class="bento-item tall">
-                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 2">
-                <div class="content">
-                    <span class="tag">EKONOMI</span>
-                    <h2>Rritja e bizneseve në zonën industriale</h2>
-                </div>
-            </div>
+        // Konfigurimi yt i Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
+            authDomain: "herolind-6ca5f.firebaseapp.com",
+            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "herolind-6ca5f",
+            storageBucket: "herolind-6ca5f.firebasestorage.app",
+            messagingSenderId: "893085364638",
+            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
+        };
 
-            <div class="bento-item">
-                <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 3">
-                <div class="content">
-                    <span class="tag">SPORT</span>
-                    <h2>KF Drenica fiton me rezultat bindës</h2>
-                </div>
-            </div>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
 
-            <div class="bento-item" style="background: #111; display: flex; align-items: center; justify-content: center; text-align: center;">
-                <div style="padding: 20px;">
-                    <h3 style="color: var(--red); font-family: 'Archivo Black';">REKLAMA JUAJ</h3>
-                    <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">Hapësirë e rezervuar</p>
-                </div>
-            </div>
+        document.getElementById('btnPosto').onclick = function() {
+            const titulli = document.getElementById('titulli').value;
+            const fotoUrl = document.getElementById('fotoUrl').value;
+            const pershkrimi = document.getElementById('pershkrimi').value;
 
-            <div class="bento-item wide">
-                <img src="https://images.unsplash.com/photo-1460666819342-999339794957?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 5">
-                <div class="content">
-                    <span class="tag">KULTURË</span>
-                    <h2>Festivali i veshjeve tradicionale</h2>
-                </div>
-            </div>
-
-        </div>
-    </main>
-
-    <footer>
-        &copy; 2026 DRENICA SOT | DESIGNED BY HEROLIND
-    </footer>
-
+            if (titulli && pershkrimi) {
+                // Postimi ne Firebase nen nyjen 'lajme'
+                push(ref(db, 'lajme'), {
+                    titulli: titulli,
+                    fotoUrl: fotoUrl || "https://via.placeholder.com/400x250",
+                    pershkrimi: pershkrimi
+                }).then(() => {
+                    document.getElementById('msg').style.display = 'block';
+                    // Pastro fushave pas postimit
+                    document.getElementById('titulli').value = '';
+                    document.getElementById('fotoUrl').value = '';
+                    document.getElementById('pershkrimi').value = '';
+                    setTimeout(() => { document.getElementById('msg').style.display = 'none'; }, 3000);
+                });
+            } else {
+                alert("Ju lutem plotësoni Titullin dhe Përshkrimin!");
+            }
+        };
+    </script>
 </body>
 </html>
