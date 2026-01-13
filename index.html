@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRENICA SOT | Lajmet e fundit</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --red: #ff0000;
+            --black: #000000;
+            --gray: #111111;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--black); color: white; overflow-x: hidden; }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.95);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--red);
+            position: sticky; top: 0; z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: white; text-decoration: none; text-transform: uppercase; }
+        .logo span { color: var(--red); text-shadow: 0 0 15px var(--red); }
+
+        /* Lajmet lëvizëse */
+        .ticker { background: var(--red); color: black; font-weight: 900; padding: 8px 0; text-transform: uppercase; font-size: 0.8rem; }
+
+        /* Bento Grid */
+        .main-container { padding: 30px 5%; max-width: 1400px; margin: 0 auto; }
+        .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+
+        .bento-item {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: 0.4s;
+            height: 250px;
+        }
+        
+        /* Madhësitë e kutive */
+        .large { grid-column: span 2; grid-row: span 2; height: 515px; }
+        .tall { grid-row: span 2; height: 515px; }
+        .wide { grid-column: span 2; }
+
+        .bento-item img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.5s; }
+        .bento-item:hover img { opacity: 0.9; transform: scale(1.05); }
+
+        .content {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+        .tag { background: var(--red); color: white; padding: 4px 10px; font-size: 0.6rem; font-weight: 900; border-radius: 4px; display: inline-block; margin-bottom: 8px; }
+        h2 { font-family: 'Archivo Black', sans-serif; font-size: 1.1rem; line-height: 1.1; color: white; }
+        .large h2 { font-size: 2rem; }
+
+        footer { padding: 40px; text-align: center; color: #444; font-size: 0.8rem; border-top: 1px solid #111; margin-top: 50px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">DRENICA<span>SOT</span></a>
+    </nav>
+
+    <div class="ticker">
+        <marquee scrollamount="7">LAJMET E FUNDIT: INVESTIME TË REJA NË SKENDERAJ — KF DRENICA GATI PËR DERBIN — MOTI: FRESKËT GJATË NATËS</marquee>
+    </div>
+
+    <main class="main-container">
+        <div class="bento-grid">
+            
+            <div class="bento-item large">
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 1">
+                <div class="content">
+                    <span class="tag">KRYESORE</span>
+                    <h2>Transformimi i Drenicës: Projektet e Reja për vitin 2026</h2>
+                </div>
+            </div>
+
+            <div class="bento-item tall">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 2">
+                <div class="content">
+                    <span class="tag">EKONOMI</span>
+                    <h2>Rritja e bizneseve në zonën industriale të Skenderajt</h2>
+                </div>
+            </div>
+
+            <div class="bento-item">
+                <img src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 3">
+                <div class="content">
+                    <span class="tag">SPORT</span>
+                    <h2>KF Drenica fiton me rezultat bindës</h2>
+                </div>
+            </div>
+
+            <div class="bento-item" style="background: #111; display: flex; align-items: center; justify-content: center; text-align: center; border: 2px dashed #333;">
+                <div style="padding: 20px;">
+                    <h3 style="color: var(--red); font-family: 'Archivo Black';">REKLAMA JUAJ</h3>
+                    <p style="font-size: 0.7rem; color: #666; margin-top: 10px;">Hapësirë e rezervuar për biznesin tuaj</p>
+                </div>
+            </div>
+
+            <div class="bento-item wide">
+                <img src="https://images.unsplash.com/photo-1460666819342-999339794957?q=80&w=1000&auto=format&fit=crop" alt="Lajmi 5">
+                <div class="content">
+                    <span class="tag">KULTURË</span>
+                    <h2>Festivali i veshjeve tradicionale në Drenicë</h2>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 DRENICA SOT | DESIGNED BY HEROLIND DEV
+    </footer>
+
+</body>
+</html>
