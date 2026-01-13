@@ -3,28 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="DRENICA SOT - Lajmet e Fundit">
+    <meta property="og:description" content="Kliko këtu për të lexuar lajmin e plotë në portalin tonë.">
+    
+    <meta property="og:image" content="https://raw.githubusercontent.com/lindi115/drenicasot/main/ballina.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
     <title id="page-title">DRENICA SOT</title>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
     <style>
-        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-        header { background: #000; padding: 15px; text-align: center; border-bottom: 3px solid red; }
-        .logo { font-size: 24px; font-weight: 900; color: white; text-decoration: none; }
+        body { background: #000; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+        header { background: #000; padding: 15px; text-align: center; border-bottom: 3px solid red; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 26px; font-weight: 900; color: white; text-decoration: none; text-transform: uppercase; }
         .logo span { color: red; }
-        .container { max-width: 800px; margin: 20px auto; padding: 15px; }
-        .back-btn { display: inline-block; padding: 8px 15px; background: #222; color: white; text-decoration: none; border-radius: 5px; margin-bottom: 20px; }
-        img, iframe { width: 100%; border-radius: 10px; margin: 20px 0; border: none; min-height: 300px; background: #111; }
-        h1 { font-size: 32px; line-height: 1.2; margin-top: 10px; }
-        p { line-height: 1.8; font-size: 19px; color: #ddd; white-space: pre-wrap; }
+        .container { max-width: 800px; margin: 20px auto; padding: 15px; background: #080808; border-radius: 12px; }
+        .back-btn { display: inline-block; padding: 10px 20px; background: red; color: white; text-decoration: none; border-radius: 6px; margin-bottom: 25px; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .back-btn:hover { background: darkred; }
+        img, iframe { width: 100%; border-radius: 10px; margin: 20px 0; border: none; min-height: 350px; background: #111; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        h1 { font-size: 34px; line-height: 1.2; margin-top: 15px; color: #fff; font-weight: 800; }
+        p { line-height: 1.8; font-size: 20px; color: #ececec; white-space: pre-wrap; margin-top: 20px; }
+        .cat-badge { background: red; padding: 5px 12px; font-weight: bold; font-size: 13px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-line { border-top: 1px solid #222; margin-top: 50px; padding: 25px 0; text-align: center; color: #666; font-size: 13px; }
     </style>
 </head>
 <body>
     <header><a href="index.html" class="logo">DRENICA<span>SOT</span></a></header>
+    
     <div class="container">
         <a href="index.html" class="back-btn">← KREU</a>
-        <div id="content">Duke ngarkuar lajmin...</div>
+        <div id="content">Duke ngarkuar lajmin e fundit...</div>
+        <div class="footer-line">© 2026 DRENICA SOT - Të gjitha të drejtat e rezervuara.</div>
     </div>
 
     <script>
@@ -45,20 +59,26 @@
         if(id) {
             firebase.database().ref('lajmet/' + id).once('value', (snap) => {
                 const l = snap.val();
-                if(!l) return;
+                if(!l) {
+                    document.getElementById('content').innerHTML = "<h1>Lajmi nuk u gjet!</h1><p>Ky lajm mund të jetë fshirë.</p>";
+                    return;
+                }
                 
-                // Kjo e ndryshon titullin në shiritin e browser-it
                 document.title = l.titulli + " | DRENICA SOT";
                 
-                let media = l.video ? `<iframe src="https://www.youtube.com/embed/${l.video}" allowfullscreen></iframe>` : `<img src="${l.foto}">`;
+                let media = l.video ? 
+                    `<iframe src="https://www.youtube.com/embed/${l.video}?autoplay=0" allowfullscreen></iframe>` : 
+                    `<img src="${l.foto}" onerror="this.src='https://via.placeholder.com/800x450/000/ff0000?text=FOTO+MUNGON'">`;
                 
                 document.getElementById('content').innerHTML = `
-                    <span style="background:red; padding:3px 8px; font-weight:bold; font-size:12px;">${l.kategoria}</span>
+                    <span class="cat-badge">${l.kategoria}</span>
                     <h1>${l.titulli}</h1>
                     ${media}
                     <p>${l.pershkrimi}</p>
                 `;
             });
+        } else {
+            document.getElementById('content').innerHTML = "<h1>Gabim!</h1><p>Asnjë lajm nuk është zgjedhur për t'u shfaqur.</p>";
         }
     </script>
 </body>
