@@ -3,115 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRENICA SOT | Lajmet e fundit</title>
+    <title>DRENICA SOT | Ballina</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
     <style>
-        /* DIZAJNI PROFESIONAL (I ZI DHE I KUQ) - SI NE FOTO */
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #000; color: white; }
+        :root { --red: #ff0000; --dark: #000000; --card: #111111; }
+        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; margin: 0; padding-bottom: 50px; }
         
-        header { background-color: #000; padding: 25px; text-align: left; border-bottom: 5px solid #d32f2f; }
-        .logo { font-size: 38px; font-weight: bold; letter-spacing: -1px; text-transform: uppercase; }
-        .logo span { color: #d32f2f; }
+        /* Header */
+        header { background: #000; padding: 25px; text-align: center; border-bottom: 5px solid var(--red); position: sticky; top: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .logo { font-size: 35px; font-weight: 900; text-transform: uppercase; letter-spacing: -2px; }
+        .logo span { color: var(--red); }
 
-        /* TRAKA E KUQE E LAJMEVE (TICKER) */
-        .news-ticker { background: #d32f2f; color: black; padding: 12px; font-weight: bold; font-size: 14px; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
+        /* Shiriti i Lajmeve (Ticker) */
+        .ticker-wrap { background: var(--red); color: white; padding: 12px; overflow: hidden; white-space: nowrap; font-weight: bold; }
+        .ticker { display: inline-block; animation: ticker 40s linear infinite; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        /* Container & Grid */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
 
-        /* GRID-I QE I RRESHTON LAJMET BUKUR */
-        #lajmet-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-            gap: 25px; 
-        }
+        /* Kartela e Lajmit 2026 */
+        .news-card { background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid #222; transition: 0.4s ease; position: relative; }
+        .news-card:hover { transform: translateY(-10px); border-color: var(--red); box-shadow: 0 15px 40px rgba(255,0,0,0.3); }
+        
+        .image-container { position: relative; width: 100%; height: 220px; overflow: hidden; }
+        .news-image { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .news-card:hover .news-image { transform: scale(1.1); }
 
-        .lajmi-card { 
-            background: #111; 
-            border-radius: 15px; 
-            overflow: hidden; 
-            border: 1px solid #222;
-            transition: 0.4s;
-            display: flex;
-            flex-direction: column;
-        }
+        /* Etiketat e Kategorive */
+        .badge { position: absolute; top: 15px; left: 15px; padding: 6px 15px; border-radius: 8px; font-size: 12px; font-weight: 900; text-transform: uppercase; z-index: 10; color: white; box-shadow: 0 5px 10px rgba(0,0,0,0.5); }
+        .cat-SPORT { background: #00ff44; color: black; }
+        .cat-VIP { background: #ff00ff; }
+        .cat-EKONOMI { background: #00ccff; color: black; }
+        .cat-DRENICA { background: #ffffff; color: black; }
+        .cat-KRYESORE { background: var(--red); }
+        .cat-TEKNOLOGJI { background: #ffcc00; color: black; }
+        .cat-BIZNES { background: #888888; }
 
-        .lajmi-card:hover { transform: translateY(-5px); border-color: #d32f2f; }
+        .news-info { padding: 25px; }
+        .news-title { font-size: 22px; font-weight: 800; margin: 0 0 12px 0; line-height: 1.3; color: #fff; }
+        .news-desc { color: #bbb; font-size: 15px; line-height: 1.6; height: 48px; overflow: hidden; margin-bottom: 20px; }
+        .news-footer { border-top: 1px solid #222; padding-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #666; }
 
-        .lajmi-imazh { 
-            width: 100%; 
-            height: 220px; 
-            object-fit: cover; /* E mbron foton te mos shtremberohet */
-            filter: brightness(0.9);
-        }
-
-        .lajmi-content { padding: 20px; }
-        .tag { background: #d32f2f; color: white; padding: 4px 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 3px; margin-bottom: 12px; display: inline-block; }
-        .lajmi-content h2 { margin: 0 0 10px; font-size: 20px; color: #fff; line-height: 1.4; }
-        .lajmi-content p { color: #bbb; font-size: 15px; line-height: 1.6; margin: 0; }
-
-        .loader { text-align: center; padding: 60px; font-size: 22px; color: #d32f2f; font-weight: bold; }
+        @media (max-width: 600px) { .news-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">DRENICA<span>SOT</span></div>
-    </header>
+<header>
+    <div class="logo">DRENICA<span>SOT</span></div>
+</header>
 
-    <div class="news-ticker">
-        Lajmet e fundit: Mirësevini në platformën e re informative të Drenicës!
-    </div>
+<div class="ticker-wrap">
+    <div class="ticker" id="ticker-content">Duke pritur lajmet e fundit...</div>
+</div>
 
-    <div class="container">
-        <div id="lajmet-grid">
-            <div class="loader">Duke kërkuar lajmet e fundit...</div>
+<div class="container">
+    <div class="news-grid" id="main-container">
         </div>
-    </div>
+</div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+<script>
+    // NGJIT KËTU KONFIGURIMIN TËND QË E KE PASUR
+    const firebaseConfig = {
+        apiKey: "AIzaSy...",
+        authDomain: "drenicasot-....firebaseapp.com",
+        databaseURL: "https://drenicasot-....firebaseio.com",
+        projectId: "drenicasot-...",
+        storageBucket: "drenicasot-....appspot.com",
+        messagingSenderId: "...",
+        appId: "..."
+    };
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
-            authDomain: "herolind-6ca5f.firebaseapp.com",
-            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "herolind-6ca5f",
-            storageBucket: "herolind-6ca5f.firebasestorage.app",
-            messagingSenderId: "893085364638",
-            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
-        };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const lajmetRef = ref(db, 'lajme');
-        const grid = document.getElementById('lajmet-grid');
+    // Funksioni që lexon lajmet në kohë reale
+    database.ref('lajmet').on('value', (snapshot) => {
+        const container = document.getElementById('main-container');
+        const ticker = document.getElementById('ticker-content');
+        container.innerHTML = '';
+        let listTitujsh = "";
 
-        onValue(lajmetRef, (snapshot) => {
-            const data = snapshot.val();
-            grid.innerHTML = ''; // Pastron loader-in
+        snapshot.forEach((child) => {
+            const l = child.val();
+            listTitujsh += ` — ${l.titulli.toUpperCase()} `;
 
-            if (data) {
-                // I rreshton lajmet e reja te parat
-                Object.keys(data).reverse().forEach(key => {
-                    const l = data[key];
-                    // Nese nuk ke vendosur foto, perdoret nje imazh placeholder i zi
-                    const foto = l.fotoUrl || "https://via.placeholder.com/600x400/111/d32f2f?text=Drenica+Sot";
-                    
-                    grid.innerHTML += `
-                        <div class="lajmi-card">
-                            <img src="${foto}" class="lajmi-imazh" alt="Lajmi">
-                            <div class="lajmi-content">
-                                <span class="tag">Kryesore</span>
-                                <h2>${l.titulli}</h2>
-                                <p>${l.pershkrimi}</p>
-                            </div>
+            container.innerHTML += `
+                <div class="news-card">
+                    <div class="image-container">
+                        <div class="badge cat-${l.kategoria}">${l.kategoria}</div>
+                        <img src="${l.foto}" class="news-image" onerror="this.src='https://via.placeholder.com/600x400/000/ff0000?text=DRENICA+SOT'">
+                    </div>
+                    <div class="news-info">
+                        <h2 class="news-title">${l.titulli}</h2>
+                        <p class="news-desc">${l.pershkrimi}</p>
+                        <div class="news-footer">
+                            <span>📍 ${l.kategoria}</span>
+                            <span>⏰ ${l.data || 'Sot'}</span>
                         </div>
-                    `;
-                });
-            } else {
-                grid.innerHTML = '<p style="text-align:center; width: 100%;">Nuk ka lajme live për momentin. Shko te Paneli Admin për të postuar.</p>';
-            }
+                    </div>
+                </div>
+            `;
         });
-    </script>
+        ticker.innerText = listTitujsh;
+    });
+</script>
+
 </body>
 </html>
