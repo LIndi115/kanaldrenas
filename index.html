@@ -1,44 +1,76 @@
-
 <!DOCTYPE html>
 <html lang="sq">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PANELI ADMIN - DRENICA SOT</title>
+    <title>DRENICA SOT | Lajmet e fundit</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
-        .admin-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 6px solid #d32f2f; }
-        h2 { color: #d32f2f; text-align: center; margin-bottom: 25px; }
-        label { font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
-        input, textarea { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 15px; background-color: #d32f2f; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { background-color: #b71c1c; }
-        .success-msg { color: green; text-align: center; display: none; margin-top: 10px; font-weight: bold; }
+        /* DIZAJNI PROFESIONAL (I ZI DHE I KUQ) - SI NE FOTO */
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #000; color: white; }
+        
+        header { background-color: #000; padding: 25px; text-align: left; border-bottom: 5px solid #d32f2f; }
+        .logo { font-size: 38px; font-weight: bold; letter-spacing: -1px; text-transform: uppercase; }
+        .logo span { color: #d32f2f; }
+
+        /* TRAKA E KUQE E LAJMEVE (TICKER) */
+        .news-ticker { background: #d32f2f; color: black; padding: 12px; font-weight: bold; font-size: 14px; text-transform: uppercase; overflow: hidden; white-space: nowrap; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        /* GRID-I QE I RRESHTON LAJMET BUKUR */
+        #lajmet-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 25px; 
+        }
+
+        .lajmi-card { 
+            background: #111; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            border: 1px solid #222;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lajmi-card:hover { transform: translateY(-5px); border-color: #d32f2f; }
+
+        .lajmi-imazh { 
+            width: 100%; 
+            height: 220px; 
+            object-fit: cover; /* E mbron foton te mos shtremberohet */
+            filter: brightness(0.9);
+        }
+
+        .lajmi-content { padding: 20px; }
+        .tag { background: #d32f2f; color: white; padding: 4px 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; border-radius: 3px; margin-bottom: 12px; display: inline-block; }
+        .lajmi-content h2 { margin: 0 0 10px; font-size: 20px; color: #fff; line-height: 1.4; }
+        .lajmi-content p { color: #bbb; font-size: 15px; line-height: 1.6; margin: 0; }
+
+        .loader { text-align: center; padding: 60px; font-size: 22px; color: #d32f2f; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="admin-box">
-        <h2>Shto Lajm të Ri</h2>
-        
-        <label>Titulli i Lajmit</label>
-        <input type="text" id="titulli" placeholder="Shkruaj titullin këtu...">
+    <header>
+        <div class="logo">DRENICA<span>SOT</span></div>
+    </header>
 
-        <label>Linku i Fotos (URL)</label>
-        <input type="text" id="fotoUrl" placeholder="Ngjit linkun e fotos (p.sh. nga Google)...">
+    <div class="news-ticker">
+        Lajmet e fundit: Mirësevini në platformën e re informative të Drenicës!
+    </div>
 
-        <label>Përshkrimi i Lajmit</label>
-        <textarea id="pershkrimi" rows="5" placeholder="Shkruaj detajet e lajmit..."></textarea>
-
-        <button id="btnPosto">POSTO LAJMIN LIVE</button>
-        <p id="msg" class="success-msg">Lajmi u postua me sukses!</p>
+    <div class="container">
+        <div id="lajmet-grid">
+            <div class="loader">Duke kërkuar lajmet e fundit...</div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // Konfigurimi yt i Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -51,30 +83,35 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const lajmetRef = ref(db, 'lajme');
+        const grid = document.getElementById('lajmet-grid');
 
-        document.getElementById('btnPosto').onclick = function() {
-            const titulli = document.getElementById('titulli').value;
-            const fotoUrl = document.getElementById('fotoUrl').value;
-            const pershkrimi = document.getElementById('pershkrimi').value;
+        onValue(lajmetRef, (snapshot) => {
+            const data = snapshot.val();
+            grid.innerHTML = ''; // Pastron loader-in
 
-            if (titulli && pershkrimi) {
-                // Postimi ne Firebase nen nyjen 'lajme'
-                push(ref(db, 'lajme'), {
-                    titulli: titulli,
-                    fotoUrl: fotoUrl || "https://via.placeholder.com/400x250",
-                    pershkrimi: pershkrimi
-                }).then(() => {
-                    document.getElementById('msg').style.display = 'block';
-                    // Pastro fushave pas postimit
-                    document.getElementById('titulli').value = '';
-                    document.getElementById('fotoUrl').value = '';
-                    document.getElementById('pershkrimi').value = '';
-                    setTimeout(() => { document.getElementById('msg').style.display = 'none'; }, 3000);
+            if (data) {
+                // I rreshton lajmet e reja te parat
+                Object.keys(data).reverse().forEach(key => {
+                    const l = data[key];
+                    // Nese nuk ke vendosur foto, perdoret nje imazh placeholder i zi
+                    const foto = l.fotoUrl || "https://via.placeholder.com/600x400/111/d32f2f?text=Drenica+Sot";
+                    
+                    grid.innerHTML += `
+                        <div class="lajmi-card">
+                            <img src="${foto}" class="lajmi-imazh" alt="Lajmi">
+                            <div class="lajmi-content">
+                                <span class="tag">Kryesore</span>
+                                <h2>${l.titulli}</h2>
+                                <p>${l.pershkrimi}</p>
+                            </div>
+                        </div>
+                    `;
                 });
             } else {
-                alert("Ju lutem plotësoni Titullin dhe Përshkrimin!");
+                grid.innerHTML = '<p style="text-align:center; width: 100%;">Nuk ka lajme live për momentin. Shko te Paneli Admin për të postuar.</p>';
             }
-        };
+        });
     </script>
 </body>
 </html>

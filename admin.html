@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PANELI ADMIN - DRENICA SOT</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; padding: 20px; }
+        .admin-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 100%; max-width: 500px; border-top: 6px solid #d32f2f; }
+        h2 { color: #d32f2f; text-align: center; margin-bottom: 25px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; color: #333; }
+        input, textarea { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background-color: #d32f2f; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background-color: #b71c1c; }
+        .success-msg { color: green; text-align: center; display: none; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>Shto Lajm të Ri</h2>
+        
+        <label>Titulli i Lajmit</label>
+        <input type="text" id="titulli" placeholder="Shkruaj titullin këtu...">
+
+        <label>Linku i Fotos (URL)</label>
+        <input type="text" id="fotoUrl" placeholder="Ngjit linkun e fotos (p.sh. nga Google)...">
+
+        <label>Përshkrimi i Lajmit</label>
+        <textarea id="pershkrimi" rows="5" placeholder="Shkruaj detajet e lajmit..."></textarea>
+
+        <button id="btnPosto">POSTO LAJMIN LIVE</button>
+        <p id="msg" class="success-msg">Lajmi u postua me sukses!</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Konfigurimi yt i Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
+            authDomain: "herolind-6ca5f.firebaseapp.com",
+            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "herolind-6ca5f",
+            storageBucket: "herolind-6ca5f.firebasestorage.app",
+            messagingSenderId: "893085364638",
+            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.getElementById('btnPosto').onclick = function() {
+            const titulli = document.getElementById('titulli').value;
+            const fotoUrl = document.getElementById('fotoUrl').value;
+            const pershkrimi = document.getElementById('pershkrimi').value;
+
+            if (titulli && pershkrimi) {
+                // Postimi ne Firebase nen nyjen 'lajme'
+                push(ref(db, 'lajme'), {
+                    titulli: titulli,
+                    fotoUrl: fotoUrl || "https://via.placeholder.com/400x250",
+                    pershkrimi: pershkrimi
+                }).then(() => {
+                    document.getElementById('msg').style.display = 'block';
+                    // Pastro fushave pas postimit
+                    document.getElementById('titulli').value = '';
+                    document.getElementById('fotoUrl').value = '';
+                    document.getElementById('pershkrimi').value = '';
+                    setTimeout(() => { document.getElementById('msg').style.display = 'none'; }, 3000);
+                });
+            } else {
+                alert("Ju lutem plotësoni Titullin dhe Përshkrimin!");
+            }
+        };
+    </script>
+</body>
+</html>
