@@ -19,22 +19,24 @@
 </head>
 <body>
     <div class="box">
-        <h2>PUBLIKO LAJM TË RI</h2>
+        <h2>PUBLIKO LAJM / VIDEO</h2>
         <label>TITULLI</label>
         <input type="text" id="t" placeholder="Titulli...">
-        <label>FOTO URL</label>
+        <label>FOTO URL (Opsionale nëse ka video)</label>
         <input type="text" id="f" placeholder="Linku i fotos...">
+        <label>YOUTUBE VIDEO URL (Nëse ka)</label>
+        <input type="text" id="v" placeholder="Psh: https://www.youtube.com/watch?v=XXXXX">
         <label>RUBRIKA</label>
         <select id="k">
             <option value="KRYESORE">Kryesore</option>
             <option value="SPORT">Sport</option>
-            <option value="VIP">VIP</option>
-            <option value="EKONOMI">Ekonomi</option>
             <option value="DRENICA">Drenica</option>
+            <option value="DIASPORA">Diaspora</option>
+            <option value="KULTURË">Kulturë</option>
         </select>
         <label>PËRMBRAJTJA</label>
         <textarea id="p" rows="4" placeholder="Teksti i lajmit..."></textarea>
-        <button onclick="save()">PUBLIKO LAJMIN</button>
+        <button onclick="save()">PUBLIKO TANI</button>
         <h3 style="margin-top:40px; border-bottom: 1px solid #222; padding-bottom: 10px;">MENAXHO LAJMET</h3>
         <div id="list"></div>
     </div>
@@ -50,29 +52,39 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+
+        function getYoutubeId(url) {
+            if(!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length == 11) ? match[2] : null;
+        }
+
         function save() {
             const titulli = document.getElementById('t').value;
-            const pershkrimi = document.getElementById('p').value;
-            if(titulli && pershkrimi) {
+            const videoUrl = document.getElementById('v').value;
+            const videoId = getYoutubeId(videoUrl);
+            
+            if(titulli) {
                 db.ref('lajmet').push({
                     titulli: titulli,
-                    foto: document.getElementById('f').value || 'https://via.placeholder.com/400',
+                    foto: document.getElementById('f').value || (videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : ''),
+                    video: videoId,
                     kategoria: document.getElementById('k').value,
-                    pershkrimi: pershkrimi
+                    pershkrimi: document.getElementById('p').value
                 });
-                alert("U postua me sukses!");
-                document.getElementById('t').value = '';
-                document.getElementById('p').value = '';
-                document.getElementById('f').value = '';
-            } else { alert("Plotëso titullin dhe tekstin!"); }
+                alert("U postua!");
+                location.reload();
+            }
         }
+
         db.ref('lajmet').on('value', (snap) => {
             const l = document.getElementById('list'); l.innerHTML = '';
             snap.forEach((c) => {
                 l.innerHTML += `<div class="item"><span>${c.val().titulli}</span><button class="btn-del" onclick="del('${c.key}')">FSHIJ</button></div>`;
             });
         });
-        function del(id) { if(confirm("A dëshiron ta fshish këtë lajm?")) db.ref('lajmet/'+id).remove(); }
+        function del(id) { if(confirm("Fshij?")) db.ref('lajmet/'+id).remove(); }
     </script>
 </body>
 </html>
