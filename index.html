@@ -10,7 +10,7 @@
         :root { --red: #ff0000; --dark: #000; }
         body { background: var(--dark); color: white; font-family: sans-serif; margin: 0; }
         header { background: #000; padding: 20px; text-align: center; border-bottom: 4px solid var(--red); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 30px; font-weight: 900; text-transform: uppercase; }
+        .logo { font-size: 30px; font-weight: 900; text-transform: uppercase; text-decoration: none; color: #fff; }
         .logo span { color: var(--red); }
         .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
@@ -20,16 +20,15 @@
         iframe, img { width: 100%; height: 100%; object-fit: cover; border: none; }
         .info { padding: 15px; }
         .badge { background: var(--red); font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
-        h2 { font-size: 18px; margin: 10px 0; color: #fff; }
-        p { color: #888; font-size: 14px; height: 45px; overflow: hidden; }
+        h2 { font-size: 18px; margin: 10px 0; color: #fff; line-height: 1.3; }
+        p { color: #888; font-size: 14px; height: 40px; overflow: hidden; }
     </style>
 </head>
 <body>
-    <header><div class="logo">DRENICA<span>SOT</span></div></header>
+    <header><a href="index.html" class="logo">DRENICA<span>SOT</span></a></header>
     <div class="container"><div class="news-grid" id="news-container"></div></div>
 
     <script>
-        // SHIFRAT E TUA TË FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -46,13 +45,11 @@
             container.innerHTML = '';
             snap.forEach((child) => {
                 const l = child.val();
-                const id = child.key; // Kjo është ID-ja unike e lajmit
-                
+                const id = child.key;
                 let mediaHTML = l.video ? 
-                    `<iframe src="https://www.youtube.com/embed/${l.video}?autoplay=0" frameborder="0"></iframe>` : 
-                    `<img src="${l.foto}" onerror="this.src='https://via.placeholder.com/400x250/000/ff0000?text=DRENICA+SOT'">`;
+                    `<iframe src="https://www.youtube.com/embed/${l.video}" frameborder="0"></iframe>` : 
+                    `<img src="${l.foto}">`;
                 
-                // Këtu i treguam faqes që kur klikohet karta, të hapet lajmi.html me atë ID
                 container.innerHTML += `
                     <div class="news-card" onclick="window.location='lajmi.html?id=${id}'">
                         <div class="media-container">${mediaHTML}</div>
