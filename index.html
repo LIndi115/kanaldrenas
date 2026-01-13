@@ -7,28 +7,25 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { --red: #ff0000; --dark: #000; --card: #111; }
+        :root { --red: #ff0000; --dark: #000; }
         body { background: var(--dark); color: white; font-family: sans-serif; margin: 0; }
         header { background: #000; padding: 20px; text-align: center; border-bottom: 4px solid var(--red); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 30px; font-weight: 900; text-transform: uppercase; }
         .logo span { color: var(--red); }
-        .ticker-wrap { background: var(--red); padding: 10px; overflow: hidden; white-space: nowrap; font-weight: bold; }
-        .ticker { display: inline-block; animation: ticker 30s linear infinite; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .container { max-width: 1200px; margin: 20px auto; padding: 20px; }
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .news-card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #222; position: relative; }
-        .badge { position: absolute; top: 10px; left: 10px; padding: 5px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; color: white; background: var(--red); text-transform: uppercase; }
-        .news-image { width: 100%; height: 200px; object-fit: cover; }
-        .news-info { padding: 15px; }
-        .news-title { font-size: 18px; margin: 0 0 10px 0; }
-        .news-desc { color: #888; font-size: 14px; height: 40px; overflow: hidden; }
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+        .news-card { background: #111; border-radius: 15px; overflow: hidden; border: 1px solid #222; }
+        .media-container { width: 100%; height: 220px; background: #000; }
+        iframe, img { width: 100%; height: 100%; object-fit: cover; border: none; }
+        .info { padding: 15px; }
+        .badge { background: var(--red); font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+        h2 { font-size: 18px; margin: 10px 0; }
     </style>
 </head>
 <body>
     <header><div class="logo">DRENICA<span>SOT</span></div></header>
-    <div class="ticker-wrap"><div class="ticker" id="ticker-text">Duke ngarkuar lajmet...</div></div>
     <div class="container"><div class="news-grid" id="news-container"></div></div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
@@ -40,24 +37,26 @@
             appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
         };
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        database.ref('lajmet').on('value', (snap) => {
+        
+        firebase.database().ref('lajmet').on('value', (snap) => {
             const container = document.getElementById('news-container');
-            const ticker = document.getElementById('ticker-text');
-            container.innerHTML = ''; let titles = "";
+            container.innerHTML = '';
             snap.forEach((child) => {
-                const l = child.val(); titles += " +++ " + l.titulli;
+                const l = child.val();
+                let mediaHTML = l.video ? 
+                    `<iframe src="https://www.youtube.com/embed/${l.video}" allowfullscreen></iframe>` : 
+                    `<img src="${l.foto}">`;
+                
                 container.innerHTML += `
                     <div class="news-card">
-                        <div class="badge">${l.kategoria}</div>
-                        <img src="${l.foto}" class="news-image" onerror="this.src='https://via.placeholder.com/400x250/000/ff0000?text=DRENICA+SOT'">
-                        <div class="news-info">
-                            <h2 class="news-title">${l.titulli}</h2>
-                            <p class="news-desc">${l.pershkrimi}</p>
+                        <div class="media-container">${mediaHTML}</div>
+                        <div class="info">
+                            <span class="badge">${l.kategoria}</span>
+                            <h2>${l.titulli}</h2>
+                            <p style="color:#888; font-size:14px;">${l.pershkrimi}</p>
                         </div>
                     </div>`;
             });
-            ticker.innerText = titles;
         });
     </script>
 </body>
