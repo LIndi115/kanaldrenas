@@ -3,42 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta property="og:type" content="article">
-    <meta property="og:title" content="DRENICA SOT - Lajmet e Fundit">
-    <meta property="og:description" content="Kliko këtu për të lexuar lajmin e plotë.">
-    
+    <meta property="og:title" content="KANAL DRENAS - Lajmi i fundit">
+    <meta property="og:description" content="Kliko për të parë lajmin e plotë në Kanal Drenas.">
     <meta property="og:image" content="https://lindi115.github.io/drenicasot/ballina.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <title id="page-title">DRENICA SOT</title>
-
+    <title>KANAL DRENAS</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    
     <style>
-        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-        header { background: #000; padding: 15px; text-align: center; border-bottom: 3px solid red; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 26px; font-weight: 900; color: white; text-decoration: none; text-transform: uppercase; }
-        .logo span { color: red; }
-        .container { max-width: 800px; margin: 20px auto; padding: 15px; background: #080808; border-radius: 12px; }
-        .back-btn { display: inline-block; padding: 10px 20px; background: red; color: white; text-decoration: none; border-radius: 6px; margin-bottom: 25px; font-weight: bold; }
-        img, iframe { width: 100%; border-radius: 10px; margin: 20px 0; border: none; min-height: 350px; background: #111; }
-        h1 { font-size: 32px; line-height: 1.2; margin-top: 15px; color: #fff; font-weight: 800; }
-        p { line-height: 1.8; font-size: 19px; color: #ddd; white-space: pre-wrap; }
-        .footer-line { border-top: 1px solid #222; margin-top: 50px; padding: 20px 0; text-align: center; color: #666; font-size: 12px; }
+        body { background: #000; color: white; font-family: sans-serif; margin: 0; }
+        header { background: #000; padding: 15px; text-align: center; border-bottom: 3px solid #ffcc00; }
+        .logo { font-size: 26px; font-weight: 900; color: white; text-decoration: none; }
+        .logo span { color: #ffcc00; }
+        .container { max-width: 800px; margin: 20px auto; padding: 15px; }
+        img, iframe { width: 100%; border-radius: 10px; min-height: 350px; border: none; }
+        h1 { font-size: 32px; }
+        p { font-size: 19px; line-height: 1.7; color: #ddd; white-space: pre-wrap; }
     </style>
 </head>
 <body>
-    <header><a href="index.html" class="logo">DRENICA<span>SOT</span></a></header>
-    
-    <div class="container">
-        <a href="index.html" class="back-btn">← KREU</a>
-        <div id="content">Duke ngarkuar lajmin...</div>
-        <div class="footer-line">© 2026 DRENICA SOT</div>
-    </div>
-
+    <header><a href="index.html" class="logo">KANAL <span>DRENAS</span></a></header>
+    <div class="container" id="content">Ngarkimi...</div>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
@@ -50,24 +35,12 @@
             appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
         };
         firebase.initializeApp(firebaseConfig);
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-
+        const id = new URLSearchParams(window.location.search).get('id');
         if(id) {
             firebase.database().ref('lajmet/' + id).once('value', (snap) => {
                 const l = snap.val();
-                if(!l) return;
-                document.title = l.titulli + " | DRENICA SOT";
-                let media = l.video ? 
-                    `<iframe src="https://www.youtube.com/embed/${l.video}" allowfullscreen></iframe>` : 
-                    `<img src="${l.foto}">`;
-                document.getElementById('content').innerHTML = `
-                    <span style="background:red; padding:4px 10px; font-weight:bold; font-size:12px;">${l.kategoria}</span>
-                    <h1>${l.titulli}</h1>
-                    ${media}
-                    <p>${l.pershkrimi}</p>
-                `;
+                let media = l.video ? `<iframe src="https://www.youtube.com/embed/${l.video}"></iframe>` : `<img src="${l.foto}">`;
+                document.getElementById('content').innerHTML = `<h1>${l.titulli}</h1>${media}<p>${l.pershkrimi}</p>`;
             });
         }
     </script>
