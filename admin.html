@@ -13,14 +13,15 @@
         .logo-login { margin-bottom: 30px; font-size: 26px; text-transform: uppercase; font-weight: bold; }
         .logo-login span { background: #ffcc00; color: #000; padding: 5px 12px; border-radius: 5px; margin-right: 5px; }
         .input-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
-        input, textarea, select { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .show-pass { display: flex; align-items: center; margin-top: 10px; cursor: pointer; color: #ffcc00; font-size: 13px; font-weight: bold; }
-        #login-btn, #publish-btn { width: 100%; padding: 16px; background: #ffcc00; color: #000; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; margin-top: 15px; }
+        label { display: block; color: #ffcc00; font-size: 11px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        input, textarea, select { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 15px; margin-bottom: 15px; }
+        input:focus { border-color: #ffcc00; outline: none; }
+        .show-pass { display: flex; align-items: center; margin-top: -10px; margin-bottom: 20px; cursor: pointer; color: #ffcc00; font-size: 13px; }
+        #login-btn, #publish-btn { width: 100%; padding: 16px; background: #ffcc00; color: #000; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; transition: 0.3s; }
         #admin-panel { display: none; width: 100%; max-width: 700px; padding: 20px; margin: 40px auto; }
         .admin-box { background: #0d0d0d; padding: 30px; border-radius: 15px; border: 1px solid #222; }
         .upload-section { background: #151515; padding: 20px; border-radius: 10px; border: 2px dashed #333; margin-bottom: 25px; text-align: center; }
-        #status { color: #ffcc00; font-size: 13px; margin-top: 12px; font-weight: bold; }
+        #status { color: #ffcc00; font-size: 13px; margin-top: 10px; font-weight: bold; }
         .item { background: #111; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border: 1px solid #222; }
         .btn-del { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
@@ -37,7 +38,7 @@
             <label>Fjalëkalimi</label>
             <input type="password" id="pass_f" placeholder="••••••••">
             <div class="show-pass" onclick="toggleP()">
-                <input type="checkbox" id="c_box"> <span>Shfaq fjalëkalimin</span>
+                <input type="checkbox" id="c_box" style="width:15px; margin-right:8px; margin-bottom:0;"> <span>Shfaq fjalëkalimin</span>
             </div>
         </div>
         <button id="login-btn" onclick="hyr()">HYR NË PANEL</button>
@@ -45,20 +46,26 @@
 
     <div id="admin-panel">
         <div class="admin-box">
-            <h2 style="color:#ffcc00; text-align:center; text-transform:uppercase;">Posto Lajm të Ri</h2>
+            <h2 style="color:#ffcc00; text-align:center; text-transform:uppercase; margin-bottom:30px;">Posto Lajm të Ri</h2>
             
             <div class="upload-section">
-                <label style="color:#ffcc00; font-size:12px;">NGARKO FOTO NGA PAJISJA (IMGBB)</label>
-                <input type="file" id="file_in" accept="image/*" onchange="uploadPhoto()" style="margin-top:10px;">
+                <label>NGARKO FOTO NGA PAJISJA</label>
+                <input type="file" id="file_in" accept="image/*" onchange="uploadPhoto()" style="margin-top:10px; border:none; background:none;">
                 <div id="status">Gati për ngarkim...</div>
             </div>
 
             <label>Titulli i Lajmit</label>
-            <input type="text" id="t">
-            <label>Linku i Fotos (Mbushet vetë)</label>
-            <input type="text" id="f">
+            <input type="text" id="t" placeholder="Shkruaj titullin e lajmit...">
+
+            <label>Autor i Lajmit (Nga kush u shkrua)</label>
+            <input type="text" id="autor" placeholder="Psh: Redaksia ose Emri juaj">
+
+            <label>Foto URL (Mbushet vetë pas ngarkimit)</label>
+            <input type="text" id="f" placeholder="Linku i fotos...">
+
             <label>YouTube Link (Opsionale)</label>
-            <input type="text" id="v">
+            <input type="text" id="v" placeholder="https://www.youtube.com/watch?v=...">
+
             <label>Kategoria</label>
             <select id="k">
                 <option value="KRYESORE">KRYESORE</option>
@@ -67,15 +74,21 @@
                 <option value="DIASPORA">DIASPORA</option>
                 <option value="SHOWBIZ">SHOWBIZ</option>
             </select>
-            <label>Përmbajtja e Lajmit</label>
-            <textarea id="p" rows="8"></textarea>
-            <button id="publish-btn" onclick="ruaj()">PUBLIKO TANI</button>
-            <div id="list" style="margin-top:30px;"></div>
+
+            <label>Përmbajtja e Lajmit (Teksti)</label>
+            <textarea id="p" rows="10" placeholder="Shkruaj tekstin e plotë këtu..."></textarea>
+
+            <button id="publish-btn" onclick="ruaj()">PUBLIKO LAJMIN TANI</button>
+
+            <div style="margin-top: 40px; border-top: 1px solid #222; padding-top: 20px;">
+                <label style="text-align:center; display:block;">Menaxhimi i Lajmeve (Fshij)</label>
+                <div id="list"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const API_KEY = "eb62a6907856c805db10887e57fa34ea";
+        const API_KEY = "eb62a6907856c805db10887e57fa34ea"; // ImgBB API
 
         function toggleP() {
             var x = document.getElementById("pass_f");
@@ -86,9 +99,10 @@
             if(document.getElementById('user_f').value === "admin" && document.getElementById('pass_f').value === "DRENASI2026") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
-            } else { alert("Gabim!"); }
+            } else { alert("Të dhënat e gabuara!"); }
         }
 
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -101,6 +115,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // IMGBB UPLOAD
         function uploadPhoto() {
             const file = document.getElementById('file_in').files[0];
             const status = document.getElementById('status');
@@ -119,32 +134,57 @@
                 if (data.success) {
                     document.getElementById('f').value = data.data.url;
                     status.innerText = "✅ U ngarkua me sukses!";
-                } else { status.innerText = "❌ Gabim!"; }
-            });
+                } else { status.innerText = "❌ Gabim gjatë ngarkimit!"; }
+            })
+            .catch(() => { status.innerText = "❌ Lidhja dështoi!"; });
         }
 
+        // SAVE TO FIREBASE
         function ruaj() {
             const t = document.getElementById('t').value;
             const f = document.getElementById('f').value;
             const p = document.getElementById('p').value;
+            const a = document.getElementById('autor').value || "Redaksia";
+            const k = document.getElementById('k').value;
+            const v = document.getElementById('v').value;
+
             if(t && f && p) {
                 db.ref('lajmet').push({
-                    titulli: t, foto: f, pershkrimi: p,
-                    kategoria: document.getElementById('k').value,
-                    video: document.getElementById('v').value,
-                    data: Date.now()
-                }).then(() => { alert("U publikua!"); location.reload(); });
+                    titulli: t,
+                    foto: f,
+                    pershkrimi: p,
+                    autor: a,
+                    kategoria: k,
+                    video: v,
+                    data: Date.now() // Kjo ruan kohën ekzakte për AdSense
+                }).then(() => {
+                    alert("Lajmi u publikua me sukses!");
+                    location.reload();
+                });
+            } else {
+                alert("Plotëso Titullin, Autorin, Foton dhe Tekstin!");
             }
         }
 
+        // LIST AND DELETE
         db.ref('lajmet').on('value', (snap) => {
             const l = document.getElementById('list'); l.innerHTML = '';
             let items = [];
             snap.forEach((c) => { items.push({id: c.key, ...c.val()}); });
             items.reverse().forEach((i) => {
-                l.innerHTML += `<div class="item"><span>${i.titulli}</span><button class="btn-del" onclick="db.ref('lajmet/${i.id}').remove()">Fshij</button></div>`;
+                l.innerHTML += `
+                    <div class="item">
+                        <span style="font-size:13px;">${i.titulli}</span>
+                        <button class="btn-del" onclick="fshij('${i.id}')">FSHIJ</button>
+                    </div>`;
             });
         });
+
+        function fshij(id) {
+            if(confirm("A jeni i sigurt që doni ta fshini këtë lajm?")) {
+                db.ref('lajmet/' + id).remove();
+            }
+        }
     </script>
 </body>
 </html>
