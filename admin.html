@@ -3,40 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOGIN | KANAL DRENAS</title>
+    <title>ADMIN | KANAL DRENAS</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
     <style>
         body { background: #000; color: white; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         
-        /* LOGIN SCREEN */
+        /* DIZAJNI I LOGINIT */
         #login-screen { background: #0d0d0d; padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.9); }
         .logo-login { margin-bottom: 30px; font-family: 'Arial Black', sans-serif; font-size: 26px; text-transform: uppercase; }
         .logo-login span { background: #ffcc00; color: #000; padding: 5px 12px; border-radius: 5px; margin-right: 5px; }
         .logo-login em { color: #ffcc00; font-style: normal; }
-
+        
         .input-group { text-align: left; margin-bottom: 20px; }
         label { display: block; color: #ffcc00; font-size: 12px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
         
-        input { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: 0.3s; }
+        input, textarea, select { width: 100%; padding: 14px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: 0.3s; }
         input:focus { border-color: #ffcc00; outline: none; }
         
-        .show-pass { display: flex; align-items: center; margin-top: 10px; cursor: pointer; }
-        .show-pass input { width: 18px; height: 18px; margin-right: 10px; cursor: pointer; }
-        .show-pass span { font-size: 13px; color: #ffcc00; font-weight: bold; }
+        .show-pass { display: flex; align-items: center; margin-top: 10px; cursor: pointer; color: #ffcc00; font-size: 13px; font-weight: bold; }
+        .show-pass input { width: 18px; height: 18px; margin: 0 10px 0 0; cursor: pointer; }
 
-        #login-btn { width: 100%; padding: 16px; background: #ffcc00; color: #000; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; margin-top: 15px; }
-        #error-msg { color: #ff4444; font-size: 14px; margin-top: 15px; display: none; font-weight: bold; }
+        #login-btn, #publish-btn { width: 100%; padding: 16px; background: #ffcc00; color: #000; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; font-size: 16px; margin-top: 15px; transition: 0.3s; }
+        #login-btn:hover, #publish-btn:hover { background: #e6b800; transform: translateY(-2px); }
 
-        /* ADMIN PANEL (Hidden by default) */
+        /* DIZAJNI I PANELIT ADMIN */
         #admin-panel { display: none; width: 100%; max-width: 700px; padding: 20px; box-sizing: border-box; margin: 40px auto; }
-        .admin-box { background: #0d0d0d; padding: 30px; border-radius: 15px; border: 1px solid #222; }
-        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; border-bottom: 2px solid #ffcc00; padding-bottom: 15px; }
+        .admin-box { background: #0d0d0d; padding: 30px; border-radius: 15px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #ffcc00; text-align: center; text-transform: uppercase; border-bottom: 2px solid #ffcc00; padding-bottom: 15px; margin-bottom: 25px; }
+        
+        .upload-section { background: #151515; padding: 20px; border-radius: 10px; border: 2px dashed #333; margin-bottom: 25px; text-align: center; }
+        #status { color: #ffcc00; font-size: 13px; margin-top: 12px; font-weight: bold; }
+        
         .field-label { font-size: 12px; color: #ffcc00; text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: bold; margin-top: 20px; }
-        textarea, select { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        button#publish-btn { width: 100%; padding: 18px; background: #ffcc00; color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 30px; }
+        
         .item { background: #111; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border: 1px solid #222; }
-        .btn-del { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-del { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-del:hover { background: #ff4444; color: white; }
     </style>
 </head>
 <body>
@@ -44,30 +49,38 @@
     <div id="login-screen">
         <div class="logo-login"><span>KANAL</span><em>DRENAS</em></div>
         <div class="input-group">
-            <label>Përdoruesi</label>
-            <input type="text" id="username_field" placeholder="admin">
+            <label>Përdoruesi (Username)</label>
+            <input type="text" id="user_f" placeholder="admin">
         </div>
         <div class="input-group">
-            <label>Fjalëkalimi</label>
-            <input type="password" id="password_field" placeholder="••••••••">
-            <div class="show-pass" onclick="togglePass()">
-                <input type="checkbox" id="check">
-                <span>Shfaq fjalëkalimin</span>
+            <label>Fjalëkalimi (Password)</label>
+            <input type="password" id="pass_f" placeholder="••••••••">
+            <div class="show-pass" onclick="togglePassword()">
+                <input type="checkbox" id="check_box"> <span>Shfaq fjalëkalimin</span>
             </div>
         </div>
         <button id="login-btn" onclick="kryejLogin()">HYR NË PANEL</button>
-        <p id="error-msg">Të dhënat janë të gabuara!</p>
     </div>
 
     <div id="admin-panel">
         <div class="admin-box">
             <h2>PANELI I POSTIMEVE</h2>
+            
+            <div class="upload-section">
+                <label style="color:#ffcc00; font-size:12px; font-weight:bold; letter-spacing: 1px;">NGARKO FOTO OSE VIDEO NGA PAJISJA</label>
+                <input type="file" id="file_input" accept="image/*,video/*" onchange="uploadToFirebase()" style="margin-top:15px; border: none; padding: 0;">
+                <div id="status">Gati për ngarkim...</div>
+            </div>
+
             <span class="field-label">Titulli i Lajmit</span>
-            <input type="text" id="t">
-            <span class="field-label">Foto URL</span>
-            <input type="text" id="f">
-            <span class="field-label">YouTube Link</span>
-            <input type="text" id="v">
+            <input type="text" id="t" placeholder="Shkruaj titullin këtu...">
+
+            <span class="field-label">Linku i Fotos (Mbushet vetë pas ngarkimit)</span>
+            <input type="text" id="f" placeholder="URL e fotos...">
+
+            <span class="field-label">YouTube Link (Opsionale)</span>
+            <input type="text" id="v" placeholder="Linku i videos nëse ka...">
+
             <span class="field-label">Kategoria</span>
             <select id="k">
                 <option value="KRYESORE">KRYESORE</option>
@@ -76,20 +89,24 @@
                 <option value="DIASPORA">DIASPORA</option>
                 <option value="SHOWBIZ">SHOWBIZ</option>
             </select>
-            <span class="field-label">Përmbajtja</span>
-            <textarea id="p" rows="10"></textarea>
-            <button id="publish-btn" onclick="save()">PUBLIKO LAJMIN</button>
+
+            <span class="field-label">Përmbajtja e Lajmit</span>
+            <textarea id="p" rows="10" placeholder="Shkruaj tekstin e plotë të lajmit..."></textarea>
+
+            <button id="publish-btn" onclick="saveNews()">PUBLIKO LAJMIN TANI</button>
+
             <div style="margin-top: 40px;">
-                <span class="field-label" style="text-align: center;">Menaxho Lajmet</span>
+                <span class="field-label" style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px;">Menaxho Lajmet (Fshij)</span>
                 <div id="list"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function togglePass() {
-            var x = document.getElementById("password_field");
-            var c = document.getElementById("check");
+        // 1. LOGIN FUNCTIONS
+        function togglePassword() {
+            var x = document.getElementById("pass_f");
+            var c = document.getElementById("check_box");
             if (x.type === "password") {
                 x.type = "text";
                 c.checked = true;
@@ -100,79 +117,104 @@
         }
 
         function kryejLogin() {
-            const u = document.getElementById('username_field').value;
-            const p = document.getElementById('password_field').value;
+            const u = document.getElementById('user_f').value;
+            const p = document.getElementById('pass_f').value;
             if (u === "admin" && p === "DRENASI2026") {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('admin-panel').style.display = 'block';
                 document.body.style.alignItems = 'flex-start';
+                document.body.style.height = 'auto';
+                document.body.style.padding = '40px 0';
             } else {
-                document.getElementById('error-msg').style.display = 'block';
+                alert("Username ose Password i gabuar!");
             }
         }
 
+        // 2. FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
             databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "herolind-6ca5f",
-            storageBucket: "herolind-6ca5f.firebasestorage.app",
+            storageBucket: "herolind-6ca5f.appspot.com",
             messagingSenderId: "893085364638",
             appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const storage = firebase.storage();
 
-        function getYoutubeId(url) {
-            if(!url) return null;
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length == 11) ? match[2] : null;
+        // 3. FILE UPLOAD FUNCTION
+        function uploadToFirebase() {
+            const file = document.getElementById('file_input').files[0];
+            const status = document.getElementById('status');
+            if (!file) return;
+
+            const fileName = 'media/' + Date.now() + '-' + file.name;
+            const storageRef = storage.ref(fileName);
+            const uploadTask = storageRef.put(file);
+
+            status.innerText = "Duke u ngarkuar... 0%";
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    status.innerText = "Duke u ngarkuar... " + Math.round(progress) + "%";
+                }, 
+                (error) => { alert("Gabim: " + error.message); }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+                        document.getElementById('f').value = url;
+                        status.innerText = "✅ Fajlli u ngarkua me sukses!";
+                    });
+                }
+            );
         }
 
-        function save() {
+        // 4. SAVE NEWS FUNCTION
+        function saveNews() {
             const titulli = document.getElementById('t').value;
-            const videoUrl = document.getElementById('v').value;
-            const vId = getYoutubeId(videoUrl);
             const foto = document.getElementById('f').value;
-            const kategoria = document.getElementById('k').value;
             const pershkrimi = document.getElementById('p').value;
+            const kategoria = document.getElementById('k').value;
+            const video = document.getElementById('v').value;
 
-            if(titulli && (foto || vId) && pershkrimi) {
+            if(titulli && foto && pershkrimi) {
                 db.ref('lajmet').push({
                     titulli: titulli,
-                    foto: foto || `https://img.youtube.com/vi/${vId}/maxresdefault.jpg`,
-                    video: vId,
-                    kategoria: kategoria,
+                    foto: foto,
                     pershkrimi: pershkrimi,
+                    kategoria: kategoria,
+                    video: video,
                     data: Date.now()
                 }).then(() => {
-                    alert("U publikua!");
+                    alert("Lajmi u publikua me sukses!");
                     location.reload();
                 });
             } else {
-                alert("Plotëso fushat!");
+                alert("Ju lutem plotësoni Titullin, Foton dhe Përmbajtjen!");
             }
         }
 
+        // 5. LIST AND DELETE FUNCTION
         db.ref('lajmet').on('value', (snap) => {
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = '';
-            let lajmet = [];
+            let items = [];
             snap.forEach((child) => {
-                lajmet.push({id: child.key, ...child.val()});
+                items.push({id: child.key, ...child.val()});
             });
-            lajmet.reverse().forEach((lajmi) => {
+            items.reverse().forEach((item) => {
                 listDiv.innerHTML += `
                     <div class="item">
-                        <span style="font-size: 13px;">${lajmi.titulli}</span>
-                        <button class="btn-del" onclick="del('${lajmi.id}')">Fshij</button>
+                        <span style="font-size: 13px;">${item.titulli}</span>
+                        <button class="btn-del" onclick="deleteNews('${item.id}')">FSHIJ</button>
                     </div>
                 `;
             });
         });
 
-        function del(id) {
+        function deleteNews(id) {
             if(confirm("A jeni i sigurt?")) {
                 db.ref('lajmet/' + id).remove();
             }
