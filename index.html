@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KANAL DRENAS | Lajmet e fundit nga Drenasi</title>
+    <title>KANAL DRENAS | Lajmet e fundit</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -11,49 +11,31 @@
     <style>
         body { background: #000; color: white; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
         
-        /* Headeri me emrin e ri */
-        header { 
-            background: #000; 
-            padding: 20px; 
-            text-align: center; 
-            border-bottom: 4px solid #ffcc00; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-        }
-        .logo { font-size: 30px; font-weight: 900; color: white; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; }
+        /* Header dhe Menu */
+        header { background: #000; padding: 15px 0; text-align: center; border-bottom: 2px solid #222; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 28px; font-weight: 900; color: white; text-decoration: none; text-transform: uppercase; }
         .logo span { color: #ffcc00; }
 
-        .container { max-width: 900px; margin: 20px auto; padding: 10px; }
+        nav { background: #111; padding: 10px 0; text-align: center; border-bottom: 3px solid #ffcc00; overflow-x: auto; white-space: nowrap; }
+        nav a { color: #ddd; text-decoration: none; margin: 0 15px; font-weight: bold; font-size: 14px; text-transform: uppercase; cursor: pointer; }
+        nav a:hover, nav a.active { color: #ffcc00; }
 
-        /* Stili i Lajmeve */
-        .lajmi { 
-            background: #0d0d0d; 
-            margin-bottom: 25px; 
-            border-radius: 12px; 
-            overflow: hidden; 
-            border: 1px solid #222; 
-            cursor: pointer; 
-            transition: 0.3s;
-        }
-        .lajmi:hover { border-color: #ffcc00; transform: translateY(-3px); }
-        .lajmi img { width: 100%; height: 280px; object-fit: cover; display: block; }
+        .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+        .section-title { border-left: 4px solid #ffcc00; padding-left: 10px; margin-bottom: 20px; font-size: 20px; text-transform: uppercase; }
+
+        /* Kartelat e Lajmeve */
+        .lajmi { background: #0d0d0d; margin-bottom: 20px; border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
+        .lajmi:hover { border-color: #ffcc00; }
+        .lajmi img { width: 100%; height: 250px; object-fit: cover; }
         
-        .info { padding: 18px; }
-        .kat { background: #ffcc00; color: black; padding: 3px 10px; font-weight: bold; font-size: 11px; border-radius: 3px; text-transform: uppercase; }
-        .info h3 { margin: 12px 0 0 0; font-size: 22px; line-height: 1.3; color: #fff; }
+        .info { padding: 15px; }
+        .kat { background: #ffcc00; color: #000; padding: 2px 8px; font-weight: bold; font-size: 11px; border-radius: 3px; }
+        .info h3 { margin: 10px 0 0 0; font-size: 20px; line-height: 1.3; }
 
-        /* Footeri per Google AdSense */
-        footer { 
-            text-align: center; 
-            padding: 40px 20px; 
-            background: #080808; 
-            border-top: 1px solid #222; 
-            margin-top: 50px; 
-        }
-        .footer-links a { color: #ffcc00; text-decoration: none; margin: 0 15px; font-size: 14px; font-weight: bold; }
-        .footer-links a:hover { text-decoration: underline; }
-        .copyright { color: #555; font-size: 12px; margin-top: 20px; }
+        /* Footer */
+        footer { text-align: center; padding: 40px 20px; background: #080808; border-top: 1px solid #222; margin-top: 50px; }
+        .footer-links a { color: #ffcc00; text-decoration: none; margin: 0 10px; font-size: 13px; }
+        .copyright { color: #555; font-size: 11px; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -62,13 +44,22 @@
         <a href="index.html" class="logo">KANAL <span>DRENAS</span></a>
     </header>
 
-    <div class="container" id="lajmet-list">
-        <p style="text-align:center;">Duke ngarkuar lajmet e fundit...</p>
+    <nav id="menu">
+        <a onclick="filtroLajmet('ALL')" class="active">KRYESORE</a>
+        <a onclick="filtroLajmet('DRENICA')">DRENICA</a>
+        <a onclick="filtroLajmet('SPORT')">SPORT</a>
+        <a onclick="filtroLajmet('DIASPORA')">DIASPORA</a>
+        <a onclick="filtroLajmet('SHOWBIZ')">SHOWBIZ</a>
+    </nav>
+
+    <div class="container">
+        <div class="section-title" id="kat-title">Lajmet e fundit</div>
+        <div id="lajmet-list">Duke ngarkuar...</div>
     </div>
 
     <footer>
         <div class="footer-links">
-            <a href="privatesia.html">Politika e Privatësisë</a>
+            <a href="privatesia.html">Politika e Privatësisë</a> | 
             <a href="rreth-nesh.html">Rreth Nesh</a>
         </div>
         <p class="copyright">© 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.</p>
@@ -85,22 +76,29 @@
             appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
         };
         firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        
+        let teGjithaLajmet = [];
 
-        db.ref('lajmet').on('value', (snap) => {
+        firebase.database().ref('lajmet').on('value', (snap) => {
+            teGjithaLajmet = [];
+            snap.forEach((child) => {
+                teGjithaLajmet.push({ id: child.key, ...child.val() });
+            });
+            teGjithaLajmet.reverse(); // Lajmet e reja lart
+            shfaqLajmet(teGjithaLajmet);
+        });
+
+        function shfaqLajmet(lajmet) {
             const list = document.getElementById('lajmet-list');
             list.innerHTML = '';
-            
-            let lajmetArray = [];
-            snap.forEach((child) => {
-                lajmetArray.push({ id: child.key, ...child.val() });
-            });
-
-            // Lajmet e fundit dalin te parat
-            lajmetArray.reverse().forEach((l) => {
+            if(lajmet.length === 0) {
+                list.innerHTML = '<p style="text-align:center; color:#666;">Nuk ka lajme në këtë kategori.</p>';
+                return;
+            }
+            lajmet.forEach((l) => {
                 list.innerHTML += `
                     <div class="lajmi" onclick="location.href='lajmi.html?id=${l.id}'">
-                        <img src="${l.foto}" onerror="this.src='https://via.placeholder.com/800x450/000/ffcc00?text=KANAL+DRENAS'">
+                        <img src="${l.foto}">
                         <div class="info">
                             <span class="kat">${l.kategoria}</span>
                             <h3>${l.titulli}</h3>
@@ -108,8 +106,23 @@
                     </div>
                 `;
             });
-        });
-    </script>
+        }
 
+        function filtroLajmet(kat) {
+            // Ndrysho stilin e menyse
+            const links = document.querySelectorAll('nav a');
+            links.forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if(kat === 'ALL') {
+                document.getElementById('kat-title').innerText = "Lajmet e fundit";
+                shfaqLajmet(teGjithaLajmet);
+            } else {
+                document.getElementById('kat-title').innerText = kat;
+                const teFiltruara = teGjithaLajmet.filter(l => l.kategoria === kat);
+                shfaqLajmet(teFiltruara);
+            }
+        }
+    </script>
 </body>
 </html>
