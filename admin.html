@@ -22,16 +22,20 @@
         .item { background: #111; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border: 1px solid #222; }
         .item span { font-size: 14px; color: #ddd; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .btn-del { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
-        .btn-del:hover { background: #ff4444; color: white; }
     </style>
 </head>
 <body>
 
     <script>
-        // MBROJTJA ME PASSWORD - Sapo hapet faqja
-        var password = prompt("Ju lutem shkruani fjalëkalimin për qasje në Panel:");
-        if (password !== "DRENASI2026") { // KETU mund ta ndryshosh fjalëkalimin tënd
-            alert("Fjalëkalimi i gabuar! Po ktheheni në ballinë.");
+        // SISTEMI I SIGURISE (Login)
+        var user = prompt("Përdoruesi (Username):");
+        var pass = prompt("Fjalëkalimi (Password):");
+
+        // Te dhenat per hyrje:
+        if (user === "admin" && pass === "DRENASI2026") {
+            alert("Mirësevini në Panel, Herolind!");
+        } else {
+            alert("Të dhëna të gabuara! Po ktheheni në ballinë.");
             window.location.href = "index.html";
         }
     </script>
@@ -40,13 +44,13 @@
         <h2>PANELI KANAL DRENAS</h2>
         
         <label>Titulli i Lajmit</label>
-        <input type="text" id="t" placeholder="Shkruaj titullin e lajmit...">
+        <input type="text" id="t" placeholder="Shkruaj titullin...">
 
-        <label>Foto URL (Linku i fotos)</label>
-        <input type="text" id="f" placeholder="Ngjit linkun e fotos këtu...">
+        <label>Foto URL</label>
+        <input type="text" id="f" placeholder="Linku i fotos...">
 
         <label>YouTube Link (Opsionale)</label>
-        <input type="text" id="v" placeholder="Nëse ka video, ngjit linkun këtu...">
+        <input type="text" id="v" placeholder="Linku i videos nëse ka...">
 
         <label>Kategoria</label>
         <select id="k">
@@ -58,17 +62,18 @@
         </select>
 
         <label>Përmbajtja e Lajmit</label>
-        <textarea id="p" rows="10" placeholder="Shkruaj lajmin e plotë këtu..."></textarea>
+        <textarea id="p" rows="10" placeholder="Shkruaj tekstin e lajmit këtu..."></textarea>
 
         <button id="publish-btn" onclick="save()">PUBLIKO LAJMIN</button>
 
         <div class="lajmet-list">
-            <label style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; display: block;">Menaxho Lajmet (Fshij)</label>
+            <label style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; display: block;">Menaxho Lajmet</label>
             <div id="list"></div>
         </div>
     </div>
 
     <script>
+        // Konfigurimi i Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -105,15 +110,14 @@
                     pershkrimi: pershkrimi,
                     data: Date.now()
                 }).then(() => {
-                    alert("Lajmi u publikua me sukses!");
+                    alert("Lajmi u publikua!");
                     location.reload();
                 });
             } else {
-                alert("Ju lutem plotësoni Titullin, Foton dhe Përmbajtjen!");
+                alert("Plotëso Titullin, Foton dhe Përmbajtjen!");
             }
         }
 
-        // Shfaq listën për fshirje
         db.ref('lajmet').on('value', (snap) => {
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = '';
@@ -132,7 +136,7 @@
         });
 
         function del(id) {
-            if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm?")) {
+            if(confirm("A jeni i sigurt?")) {
                 db.ref('lajmet/' + id).remove();
             }
         }
