@@ -15,13 +15,15 @@
         input, textarea, select { width: 100%; padding: 12px; margin-bottom: 20px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         input:focus, textarea:focus, select:focus { border-color: #ffcc00; outline: none; }
         
-        button { width: 100%; padding: 16px; background: #ffcc00; color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; font-size: 16px; }
-        button:hover { background: #e6b800; transform: scale(1.02); }
+        /* Butoni tani eshte i verdhe si ne balline */
+        button#publish-btn { width: 100%; padding: 16px; background: #ffcc00; color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; font-size: 16px; }
+        button#publish-btn:hover { background: #e6b800; transform: scale(1.02); }
         
         .lajmet-list { margin-top: 40px; }
         .item { background: #111; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; border: 1px solid #222; }
-        .item span { font-size: 14px; color: #ddd; max-width: 70%; }
-        .btn-del { background: #ff4444; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .item span { font-size: 14px; color: #ddd; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-del { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .btn-del:hover { background: #ff4444; color: white; }
     </style>
 </head>
 <body>
@@ -30,15 +32,15 @@
         <h2>PANELI KANAL DRENAS</h2>
         
         <label>Titulli i Lajmit</label>
-        <input type="text" id="t" placeholder="Shkruaj titullin këtu...">
+        <input type="text" id="t" placeholder="Shkruaj titullin...">
 
         <label>Foto URL (Linku i fotos)</label>
         <input type="text" id="f" placeholder="Ngjit linkun e fotos...">
 
-        <label>YouTube Link (Nëse ka video)</label>
-        <input type="text" id="v" placeholder="Psh: https://www.youtube.com/watch?v=...">
+        <label>YouTube Link (Opsionale)</label>
+        <input type="text" id="v" placeholder="Linku i videos nese ka...">
 
-        <label>Zgjidh Rubrikën</label>
+        <label>Kategoria</label>
         <select id="k">
             <option value="KRYESORE">KRYESORE</option>
             <option value="DRENICA">DRENICA</option>
@@ -48,12 +50,12 @@
         </select>
 
         <label>Përmbajtja e Lajmit</label>
-        <textarea id="p" rows="8" placeholder="Shkruaj tekstin e lajmit këtu..."></textarea>
+        <textarea id="p" rows="8" placeholder="Shkruaj lajmin këtu..."></textarea>
 
-        <button onclick="save()">PUBLIKO LAJMIN</button>
+        <button id="publish-btn" onclick="save()">PUBLIKO LAJMIN</button>
 
         <div class="lajmet-list">
-            <label style="text-align: center;">Lajmet e Publikuara</label>
+            <label style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px;">Menaxho Lajmet</label>
             <div id="list"></div>
         </div>
     </div>
@@ -94,30 +96,33 @@
                     pershkrimi: pershkrimi,
                     data: Date.now()
                 }).then(() => {
-                    alert("Lajmi u publikua me sukses!");
+                    alert("Lajmi u publikua!");
                     location.reload();
                 });
             } else {
-                alert("Ju lutem plotësoni Titullin, Përshkrimin dhe vendosni një Foto ose Video!");
+                alert("Ploteso te gjitha fushat!");
             }
         }
 
         db.ref('lajmet').on('value', (snap) => {
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = '';
+            let lajmet = [];
             snap.forEach((child) => {
-                const lajmi = child.val();
-                listDiv.innerHTML = `
+                lajmet.push({id: child.key, ...child.val()});
+            });
+            lajmet.reverse().forEach((lajmi) => {
+                listDiv.innerHTML += `
                     <div class="item">
                         <span>${lajmi.titulli}</span>
-                        <button class="btn-del" onclick="del('${child.key}')">FSHIJ</button>
+                        <button class="btn-del" onclick="del('${lajmi.id}')">FSHIJ</button>
                     </div>
-                ` + listDiv.innerHTML;
+                `;
             });
         });
 
         function del(id) {
-            if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm?")) {
+            if(confirm("A do ta fshish?")) {
                 db.ref('lajmet/' + id).remove();
             }
         }
