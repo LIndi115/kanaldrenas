@@ -15,7 +15,6 @@
         input, textarea, select { width: 100%; padding: 12px; margin-bottom: 20px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
         input:focus, textarea:focus, select:focus { border-color: #ffcc00; outline: none; }
         
-        /* Butoni tani eshte i verdhe si ne balline */
         button#publish-btn { width: 100%; padding: 16px; background: #ffcc00; color: black; border: none; border-radius: 8px; font-weight: 900; cursor: pointer; text-transform: uppercase; transition: 0.3s; font-size: 16px; }
         button#publish-btn:hover { background: #e6b800; transform: scale(1.02); }
         
@@ -28,17 +27,26 @@
 </head>
 <body>
 
+    <script>
+        // MBROJTJA ME PASSWORD - Sapo hapet faqja
+        var password = prompt("Ju lutem shkruani fjalëkalimin për qasje në Panel:");
+        if (password !== "DRENASI2026") { // KETU mund ta ndryshosh fjalëkalimin tënd
+            alert("Fjalëkalimi i gabuar! Po ktheheni në ballinë.");
+            window.location.href = "index.html";
+        }
+    </script>
+
     <div class="admin-box">
         <h2>PANELI KANAL DRENAS</h2>
         
         <label>Titulli i Lajmit</label>
-        <input type="text" id="t" placeholder="Shkruaj titullin...">
+        <input type="text" id="t" placeholder="Shkruaj titullin e lajmit...">
 
         <label>Foto URL (Linku i fotos)</label>
-        <input type="text" id="f" placeholder="Ngjit linkun e fotos...">
+        <input type="text" id="f" placeholder="Ngjit linkun e fotos këtu...">
 
         <label>YouTube Link (Opsionale)</label>
-        <input type="text" id="v" placeholder="Linku i videos nese ka...">
+        <input type="text" id="v" placeholder="Nëse ka video, ngjit linkun këtu...">
 
         <label>Kategoria</label>
         <select id="k">
@@ -50,12 +58,12 @@
         </select>
 
         <label>Përmbajtja e Lajmit</label>
-        <textarea id="p" rows="8" placeholder="Shkruaj lajmin këtu..."></textarea>
+        <textarea id="p" rows="10" placeholder="Shkruaj lajmin e plotë këtu..."></textarea>
 
         <button id="publish-btn" onclick="save()">PUBLIKO LAJMIN</button>
 
         <div class="lajmet-list">
-            <label style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px;">Menaxho Lajmet</label>
+            <label style="text-align: center; border-bottom: 1px solid #333; padding-bottom: 5px; display: block;">Menaxho Lajmet (Fshij)</label>
             <div id="list"></div>
         </div>
     </div>
@@ -82,7 +90,8 @@
 
         function save() {
             const titulli = document.getElementById('t').value;
-            const vId = getYoutubeId(document.getElementById('v').value);
+            const videoUrl = document.getElementById('v').value;
+            const vId = getYoutubeId(videoUrl);
             const foto = document.getElementById('f').value;
             const kategoria = document.getElementById('k').value;
             const pershkrimi = document.getElementById('p').value;
@@ -96,14 +105,15 @@
                     pershkrimi: pershkrimi,
                     data: Date.now()
                 }).then(() => {
-                    alert("Lajmi u publikua!");
+                    alert("Lajmi u publikua me sukses!");
                     location.reload();
                 });
             } else {
-                alert("Ploteso te gjitha fushat!");
+                alert("Ju lutem plotësoni Titullin, Foton dhe Përmbajtjen!");
             }
         }
 
+        // Shfaq listën për fshirje
         db.ref('lajmet').on('value', (snap) => {
             const listDiv = document.getElementById('list');
             listDiv.innerHTML = '';
@@ -122,7 +132,7 @@
         });
 
         function del(id) {
-            if(confirm("A do ta fshish?")) {
+            if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm?")) {
                 db.ref('lajmet/' + id).remove();
             }
         }
