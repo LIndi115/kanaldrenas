@@ -5,100 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - KANAL DRENAS</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h2 { color: #333; border-bottom: 2px solid #ffcc00; padding-bottom: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Stili i Search Bar */
-        .search-box { margin-bottom: 20px; position: relative; }
+        h2 { color: #1a1a1a; border-bottom: 3px solid #ffcc00; padding-bottom: 10px; margin-bottom: 25px; }
+        
+        /* Forma e Shtimit të Lajmit */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        input[type="text"], input[type="date"], select, textarea { 
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; 
+        }
+        
+        .btn-post { background-color: #ffcc00; color: black; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; margin-top: 10px; }
+        .btn-post:hover { background-color: #e6b800; }
+
+        /* Seksioni i Kërkimit dhe Tabelës */
+        .header-table { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 15px; }
+        
         #searchInput { 
-            width: 100%; 
-            padding: 12px 20px; 
-            margin: 8px 0; 
-            display: inline-block; 
-            border: 2px solid #ffcc00; 
-            border-radius: 25px; 
-            box-sizing: border-box; 
-            font-size: 16px;
-            outline: none;
+            width: 300px; padding: 10px; border: 2px solid #ffcc00; border-radius: 20px; outline: none; 
         }
 
-        /* Stili i Tabelës */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #ffcc00; color: black; }
-        tr:hover { background-color: #f9f9f9; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #333; color: white; }
         
-        .btn-edit { background: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; }
-        .btn-delete { background: #f44336; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        .btn-delete:hover { background: #cc0000; }
+        
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Admin Panel - Menaxhimi i Lajmeve</h2>
+    <h2>Shto Lajm të Ri - KANAL DRENAS</h2>
+    
+    <div class="form-group">
+        <label>Titulli i Lajmit:</label>
+        <input type="text" id="title" placeholder="Shkruaj titullin...">
+    </div>
+    
+    <div class="form-group">
+        <label>Linku i Fotos (URL):</label>
+        <input type="text" id="image" placeholder="Ngjit linkun e fotos këtu...">
+    </div>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="searchNews()" placeholder="Kërko lajme sipas titullit ose datës...">
+    <div style="display: flex; gap: 20px;">
+        <div class="form-group" style="flex: 1;">
+            <label>Kategoria:</label>
+            <select id="category">
+                <option value="Aktuale">Aktuale</option>
+                <option value="Sport">Sport</option>
+                <option value="Kulturë">Kulturë</option>
+                <option value="Drenas">Drenas</option>
+            </select>
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label>Data:</label>
+            <input type="date" id="date">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label>Përmbajtja e Lajmit:</label>
+        <textarea id="content" rows="5" placeholder="Shkruaj lajmin e plotë këtu..."></textarea>
+    </div>
+
+    <button class="btn-post" onclick="addNews()">PUBLIKO LAJMIN</button>
+
+    <hr style="margin-top: 40px; border: 0; border-top: 1px solid #eee;">
+
+    <div class="header-table">
+        <h3>Lista e Lajmeve të Publikuara</h3>
+        <input type="text" id="searchInput" onkeyup="searchNews()" placeholder="🔍 Kërko lajm...">
     </div>
 
     <table id="newsTable">
         <thead>
             <tr>
-                <th>Titulli i Lajmit</th>
-                <th>Data</th>
+                <th>Foto</th>
+                <th>Titulli</th>
                 <th>Kategoria</th>
-                <th>Veprime</th>
+                <th>Data</th>
+                <th>Veprim</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="newsBody">
             <tr>
-                <td>Shtohet një projekt i ri në Drenas</td>
-                <td>2026-01-14</td>
-                <td>Aktuale</td>
-                <td>
-                    <button class="btn-edit">Edit</button>
-                    <button class="btn-delete">Fshij</button>
-                </td>
-            </tr>
-            <tr>
-                <td>Kanal Drenas fillon punën si portal</td>
-                <td>2026-01-15</td>
+                <td><img src="https://via.placeholder.com/50" class="img-preview"></td>
+                <td>Mirësevini në Kanal Drenas</td>
                 <td>Lajme</td>
-                <td>
-                    <button class="btn-edit">Edit</button>
-                    <button class="btn-delete">Fshij</button>
-                </td>
+                <td>2026-01-15</td>
+                <td><button class="btn-delete" onclick="deleteRow(this)">Fshij</button></td>
             </tr>
-            </tbody>
+        </tbody>
     </table>
 </div>
 
 <script>
-function searchNews() {
-    // Merr vlerën nga inputi
-    let input = document.getElementById("searchInput");
-    let filter = input.value.toLowerCase();
-    let table = document.getElementById("newsTable");
-    let tr = table.getElementsByTagName("tr");
-
-    // Shko nëpër të gjithë rreshtat e tabelës dhe fshih ato që nuk përputhen
-    for (let i = 1; i < tr.length; i++) {
-        let tdTitle = tr[i].getElementsByTagName("td")[0];
-        let tdDate = tr[i].getElementsByTagName("td")[1];
+    // Funksioni për të shtuar lajm në tabelë (ashtu siç e kishe)
+    function addNews() {
+        let title = document.getElementById('title').value;
+        let image = document.getElementById('image').value;
+        let category = document.getElementById('category').value;
+        let date = document.getElementById('date').value;
         
-        if (tdTitle || tdDate) {
-            let titleValue = tdTitle.textContent || tdTitle.innerText;
-            let dateValue = tdDate.textContent || tdDate.innerText;
-            
-            if (titleValue.toLowerCase().indexOf(filter) > -1 || dateValue.toLowerCase().indexOf(filter) > -1) {
+        if(title == "" || date == "") {
+            alert("Ju lutem plotësoni titullin dhe datën!");
+            return;
+        }
+
+        let table = document.getElementById('newsBody');
+        let row = table.insertRow(0);
+        
+        row.innerHTML = `
+            <td><img src="${image}" class="img-preview" onerror="this.src='https://via.placeholder.com/50'"></td>
+            <td>${title}</td>
+            <td>${category}</td>
+            <td>${date}</td>
+            <td><button class="btn-delete" onclick="deleteRow(this)">Fshij</button></td>
+        `;
+
+        // Pastro formën pas publikimit
+        document.getElementById('title').value = "";
+        document.getElementById('image').value = "";
+        document.getElementById('content').value = "";
+    }
+
+    // Funksioni për Fshirje
+    function deleteRow(btn) {
+        if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm?")) {
+            let row = btn.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    }
+
+    // Funksioni SEARCH në anën e djathtë
+    function searchNews() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("newsTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            let titleText = tr[i].getElementsByTagName("td")[1].textContent.toLowerCase();
+            if (titleText.indexOf(filter) > -1) {
                 tr[i].style.display = "";
             } else {
                 tr[i].style.display = "none";
             }
         }
     }
-}
 </script>
 
 </body>
