@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LAJMI | KANAL DRENAS</title>
+    
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="fb-url" content="">
+    <meta property="og:title" id="fb-title" content="KANAL DRENAS">
+    <meta property="og:description" id="fb-desc" content="Lexoni lajmin e plotë në Kanal Drenas">
+    <meta property="og:image" id="fb-img" content="">
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
@@ -74,7 +81,6 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Funksioni për të nxjerrë ID-në e saktë të YouTube
         function merrYoutubeID(url) {
             if (!url) return null;
             let videoId = "";
@@ -98,7 +104,12 @@
                     document.getElementById('titulli').innerText = data.titulli;
                     document.title = data.titulli + " | KANAL DRENAS";
                     
-                    // Shfaq foton vetem nese ka link fotoje
+                    // Përditëso Meta Tags për Facebook
+                    document.getElementById('fb-title').setAttribute('content', data.titulli);
+                    document.getElementById('fb-img').setAttribute('content', data.foto);
+                    document.getElementById('fb-desc').setAttribute('content', data.pershkrimi.substring(0, 150) + "...");
+                    document.getElementById('fb-url').setAttribute('content', window.location.href);
+
                     if(data.foto) {
                         const imgTag = document.getElementById('foto');
                         imgTag.src = data.foto;
@@ -107,12 +118,10 @@
 
                     document.getElementById('teksti').innerText = data.pershkrimi;
                     
-                    // Autor dhe Data
                     const koha = new Date(data.data);
                     document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
                     document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                    // NDREQJA E VIDEOS
                     if(data.video && data.video.trim() !== "") {
                         const vId = merrYoutubeID(data.video);
                         if(vId) {
