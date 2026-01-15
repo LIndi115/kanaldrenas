@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanal Drenas - Admin Panel</title>
+    <title>Kanal Drenas - Admin Panel (Pro)</title>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #000; color: white; margin: 0; padding: 20px; }
         .container { max-width: 1000px; margin: auto; background: #111; padding: 25px; border-radius: 12px; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); }
-        
         h2 { text-align: center; color: #ffcc00; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; border-bottom: 2px solid #ffcc00; padding-bottom: 10px; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
@@ -15,30 +14,26 @@
         
         label { display: block; margin-bottom: 8px; font-weight: bold; color: #ffcc00; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; font-size: 15px; }
-        input:focus, select:focus, textarea:focus { border-color: #ffcc00; outline: none; background: #2a2a2a; }
+        input[type="file"] { padding: 8px; background: #333; border: 1px dashed #ffcc00; cursor: pointer; }
 
         .btn-post { background: #ffcc00; color: black; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-top: 20px; text-transform: uppercase; transition: 0.3s; }
         .btn-post:hover { background: #ffd633; transform: translateY(-2px); }
 
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 15px; background: #222; border-radius: 8px 8px 0 0; border-bottom: 2px solid #ffcc00; }
-        
-        .search-area { display: flex; gap: 10px; }
-        #searchInput { width: 280px; background: white; color: black; font-weight: bold; border-radius: 4px; padding: 10px; }
+        .search-area input { width: 280px; background: white; color: black; font-weight: bold; border-radius: 4px; padding: 10px; border:none; }
         
         table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-bottom: 50px; }
         th, td { padding: 15px; border-bottom: 1px solid #333; text-align: left; }
-        th { color: #ffcc00; text-transform: uppercase; font-size: 13px; }
+        th { color: #ffcc00; text-transform: uppercase; }
         
         .btn-shlyej { background: #ff3333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-shlyej:hover { background: #cc0000; }
-        
-        .preview-img { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; background: #333; }
+        .preview-media { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>PANELI I ADMINISTRIMIT - KANAL DRENAS</h2>
+    <h2>ADMIN PANEL - KANAL DRENAS</h2>
 
     <div class="form-grid">
         <div class="full-width">
@@ -47,8 +42,8 @@
         </div>
         
         <div>
-            <label>Linku i Fotos (URL)</label>
-            <input type="text" id="mediaLink" placeholder="Ngjit linkun e fotos këtu...">
+            <label>Ngarko Foto ose Video (Nga pajisja)</label>
+            <input type="file" id="mediaFile" accept="image/*,video/*">
         </div>
         
         <div>
@@ -59,17 +54,11 @@
         <div>
             <label>Kategoria</label>
             <select id="category">
-                <option value="KRYESORE">KRYESORE</option>
                 <option value="DRENICA">DRENICA</option>
                 <option value="SPORT">SPORT</option>
                 <option value="SHOWBIZ">SHOWBIZ</option>
                 <option value="DIASPORA">DIASPORA</option>
             </select>
-        </div>
-
-        <div>
-            <label>Video Link (Opsionale)</label>
-            <input type="text" id="videoLink" placeholder="Link nga YouTube ose FB...">
         </div>
 
         <div class="full-width">
@@ -90,9 +79,8 @@
     <table>
         <thead>
             <tr>
-                <th>Foto</th>
+                <th>Media</th>
                 <th>Titulli</th>
-                <th>Autori</th>
                 <th>Kategoria</th>
                 <th>Veprimi</th>
             </tr>
@@ -102,28 +90,42 @@
 </div>
 
 <script>
-    // Kur hapet faqja, shfaq lajmet e ruajtura
     window.onload = shfaqLajmet;
 
     function publikoLajmin() {
-        const titulli = document.getElementById('title').value;
-        const autori = document.getElementById('author').value;
-        const kategoria = document.getElementById('category').value;
-        const foto = document.getElementById('mediaLink').value;
-        const teksti = document.getElementById('content').value;
+        const title = document.getElementById('title').value;
+        const author = document.getElementById('author').value;
+        const category = document.getElementById('category').value;
+        const content = document.getElementById('content').value;
+        const fileInput = document.getElementById('mediaFile');
+        const file = fileInput.files[0];
 
-        if(titulli === "" || autori === "") {
+        if(!title || !author) {
             alert("Ju lutem plotësoni Titullin dhe Autorin!");
             return;
         }
 
+        // Nëse ka fajll (foto/video), e kthejmë në Base64 që ta ruajmë
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                saveToStorage(title, author, category, content, e.target.result, file.type);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            saveToStorage(title, author, category, content, 'https://via.placeholder.com/800x450?text=KANAL+DRENAS', 'image/png');
+        }
+    }
+
+    function saveToStorage(title, author, category, content, mediaData, mediaType) {
         const lajmiRi = {
             id: Date.now(),
-            titulli: titulli,
-            autori: autori,
-            kategoria: kategoria,
-            foto: foto || 'https://via.placeholder.com/60x40?text=No+Img',
-            teksti: teksti
+            titulli: title,
+            autori: author,
+            kategoria: category,
+            teksti: content,
+            media: mediaData,
+            tipi: mediaType
         };
 
         let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
@@ -131,9 +133,7 @@
         localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
 
         alert("Lajmi u publikua me sukses!");
-        document.getElementById('title').value = "";
-        document.getElementById('content').value = "";
-        shfaqLajmet();
+        location.reload(); // Rifresko faqen për të pastruar fushave
     }
 
     function shfaqLajmet() {
@@ -141,20 +141,20 @@
         const lista = document.getElementById('listaLajmeve');
         lista.innerHTML = "";
 
-        arkiva.forEach(lajmi => {
+        arkiva.forEach(l => {
+            let mediaPreview = l.tipi.includes('video') ? '🎥 Video' : `<img src="${l.media}" class="preview-media">`;
             const rreshti = lista.insertRow();
             rreshti.innerHTML = `
-                <td><img src="${lajmi.foto}" class="preview-img"></td>
-                <td><strong>${lajmi.titulli}</strong></td>
-                <td>${lajmi.autori}</td>
-                <td style="color:#ffcc00">${lajmi.kategoria}</td>
-                <td><button class="btn-shlyej" onclick="shlyejLajmin(${lajmi.id})">SHLYEJ</button></td>
+                <td>${mediaPreview}</td>
+                <td><strong>${l.titulli}</strong></td>
+                <td>${l.kategoria}</td>
+                <td><button class="btn-shlyej" onclick="shlyejLajmin(${l.id})">SHLYEJ</button></td>
             `;
         });
     }
 
     function shlyejLajmin(id) {
-        if(confirm("A jeni i sigurt që dëshironi ta shlyeni?")) {
+        if(confirm("A jeni i sigurt?")) {
             let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
             arkiva = arkiva.filter(l => l.id !== id);
             localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
