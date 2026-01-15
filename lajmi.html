@@ -7,37 +7,60 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        body { background: #000; color: white; font-family: sans-serif; margin: 0; padding: 0; }
-        header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid #ffcc00; }
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
-        img { width: 100%; border-radius: 10px; }
-        h1 { color: #ffcc00; margin-top: 20px; }
-        .meta-info { border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; color: #888; font-size: 14px; }
-        .meta-info strong { color: #ffcc00; }
-        .content { line-height: 1.8; font-size: 18px; }
+        :root { --verdh: #ffcc00; --zi: #000; --gri: #111; }
+        body { background: var(--zi); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        
+        header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--verdh); position: sticky; top: 0; z-index: 1000; }
+        .logo { text-decoration: none; color: white; font-size: 22px; font-weight: bold; text-transform: uppercase; }
+        
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: var(--gri); border-radius: 12px; }
+        
+        h1 { color: var(--verdh); margin-top: 10px; font-size: 28px; line-height: 1.3; }
+        
+        .meta-info { border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; color: #888; font-size: 14px; }
+        .meta-info strong { color: var(--verdh); }
+
+        .main-img { width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        
+        #video-box { margin-top: 25px; background: #000; border-radius: 10px; overflow: hidden; }
+        
+        .content { line-height: 1.8; font-size: 18px; color: #ddd; margin-top: 25px; white-space: pre-wrap; }
+        
+        .btn-back { display: inline-block; margin-top: 30px; color: var(--verdh); text-decoration: none; font-weight: bold; border: 1px solid var(--verdh); padding: 10px 20px; border-radius: 5px; transition: 0.3s; }
+        .btn-back:hover { background: var(--verdh); color: black; }
+        
+        footer { text-align: center; padding: 40px; color: #555; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h2 style="margin:0; text-transform:uppercase;">KANAL <span style="background:#ffcc00; color:#000; padding:2px 5px;">DRENAS</span></h2>
+        <a href="index.html" class="logo">KANAL <span style="background:var(--verdh); color:#000; padding:2px 5px; border-radius:3px;">DRENAS</span></a>
     </header>
 
     <div class="container">
         <div id="lajmi-full">
-            <h1 id="titulli">Duke u ngarkuar...</h1>
+            <h1 id="titulli">Duke u ngarkuar lajmi...</h1>
             
             <div class="meta-info">
                 <span id="autor"></span> | <span id="data"></span>
             </div>
 
-            <img id="foto" src="" alt="">
-            <div id="video-box" style="margin-top:20px;"></div>
+            <img id="foto" class="main-img" src="" alt="" style="display:none;">
+            
+            <div id="video-box"></div>
+
             <div class="content">
                 <p id="teksti"></p>
             </div>
+
+            <a href="index.html" class="btn-back">← KTHEHU TE BALLINA</a>
         </div>
     </div>
+
+    <footer>
+        &copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.
+    </footer>
 
     <script>
         const firebaseConfig = {
@@ -51,7 +74,20 @@
         };
         firebase.initializeApp(firebaseConfig);
 
-        // Merr ID-ne e lajmit nga linku
+        // Funksioni për të nxjerrë ID-në e saktë të YouTube
+        function merrYoutubeID(url) {
+            if (!url) return null;
+            let videoId = "";
+            if (url.includes("v=")) {
+                videoId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes("youtu.be/")) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes("embed/")) {
+                videoId = url.split('embed/')[1];
+            }
+            return videoId;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         const lajmiId = urlParams.get('id');
 
@@ -60,21 +96,43 @@
                 const data = snap.val();
                 if(data) {
                     document.getElementById('titulli').innerText = data.titulli;
-                    document.getElementById('foto').src = data.foto;
+                    document.title = data.titulli + " | KANAL DRENAS";
+                    
+                    // Shfaq foton vetem nese ka link fotoje
+                    if(data.foto) {
+                        const imgTag = document.getElementById('foto');
+                        imgTag.src = data.foto;
+                        imgTag.style.display = "block";
+                    }
+
                     document.getElementById('teksti').innerText = data.pershkrimi;
                     
-                    // SHFAQ AUTORIN DHE DATEN
+                    // Autor dhe Data
                     const koha = new Date(data.data);
                     document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
-                    document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL');
+                    document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                    // Nese ka video, shfaqe
-                    if(data.video) {
-                        const vId = data.video.split('v=')[1];
-                        document.getElementById('video-box').innerHTML = `<iframe width="100%" height="400" src="https://www.youtube.com/embed/${vId}" frameborder="0" allowfullscreen style="border-radius:10px;"></iframe>`;
+                    // NDREQJA E VIDEOS
+                    if(data.video && data.video.trim() !== "") {
+                        const vId = merrYoutubeID(data.video);
+                        if(vId) {
+                            document.getElementById('video-box').innerHTML = `
+                                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                                    <iframe 
+                                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" 
+                                        src="https://www.youtube.com/embed/${vId}" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                    </iframe>
+                                </div>`;
+                        }
                     }
+                } else {
+                    document.getElementById('titulli').innerText = "Lajmi nuk u gjet!";
                 }
             });
+        } else {
+            window.location.href = "index.html";
         }
     </script>
 </body>
