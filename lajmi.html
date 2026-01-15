@@ -9,7 +9,8 @@
     <meta property="og:url" id="fb-url" content="">
     <meta property="og:title" id="fb-title" content="KANAL DRENAS">
     <meta property="og:description" id="fb-desc" content="Lexoni lajmin e plotë në Kanal Drenas">
-    <meta property="og:image" id="fb-img" content="">
+    <meta property="og:image" id="fb-img" content="https://raw.githubusercontent.com/lindi115/kanaldrenas/main/logo.jpg">
+    <meta property="fb:app_id" content="966242223397117">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -101,27 +102,29 @@
             firebase.database().ref('lajmet/' + lajmiId).on('value', (snap) => {
                 const data = snap.val();
                 if(data) {
+                    // 1. Shfaq të dhënat në faqe
                     document.getElementById('titulli').innerText = data.titulli;
                     document.title = data.titulli + " | KANAL DRENAS";
-                    
-                    // Përditëso Meta Tags për Facebook
-                    document.getElementById('fb-title').setAttribute('content', data.titulli);
-                    document.getElementById('fb-img').setAttribute('content', data.foto);
-                    document.getElementById('fb-desc').setAttribute('content', data.pershkrimi.substring(0, 150) + "...");
-                    document.getElementById('fb-url').setAttribute('content', window.location.href);
+                    document.getElementById('teksti').innerText = data.pershkrimi;
 
+                    // 2. Përditëso Meta Tags për Facebook dinamikisht
+                    document.getElementById('fb-title').setAttribute('content', data.titulli);
+                    document.getElementById('fb-url').setAttribute('content', window.location.href);
+                    document.getElementById('fb-desc').setAttribute('content', data.pershkrimi.substring(0, 150) + "...");
+                    
                     if(data.foto) {
+                        document.getElementById('fb-img').setAttribute('content', data.foto);
                         const imgTag = document.getElementById('foto');
                         imgTag.src = data.foto;
                         imgTag.style.display = "block";
                     }
 
-                    document.getElementById('teksti').innerText = data.pershkrimi;
-                    
+                    // 3. Autor dhe Data
                     const koha = new Date(data.data);
                     document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
                     document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
 
+                    // 4. Trajtimi i Videos
                     if(data.video && data.video.trim() !== "") {
                         const vId = merrYoutubeID(data.video);
                         if(vId) {
