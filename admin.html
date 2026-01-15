@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanal Drenas - Admin Panel (Pro)</title>
+    <title>Kanal Drenas - Admin Panel (Firebase Edition)</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
     <style>
-        body { font-family: 'Arial', sans-serif; background-color: #000; color: white; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: #111; padding: 25px; border-radius: 12px; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); }
-        h2 { text-align: center; color: #ffcc00; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; border-bottom: 2px solid #ffcc00; padding-bottom: 10px; }
+        :root { --verdh: #ffcc00; --zi: #000; --gri: #111; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--zi); color: white; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: var(--gri); padding: 25px; border-radius: 12px; border: 2px solid var(--verdh); box-shadow: 0 0 20px rgba(255, 204, 0, 0.3); }
+        
+        h2 { text-align: center; color: var(--verdh); text-transform: uppercase; letter-spacing: 3px; border-bottom: 2px solid var(--verdh); padding-bottom: 10px; }
         
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #ffcc00; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; font-size: 15px; }
-        input[type="file"] { padding: 8px; background: #333; border: 1px dashed #ffcc00; cursor: pointer; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--verdh); font-size: 13px; }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
+        input:focus { border-color: var(--verdh); outline: none; }
 
-        .btn-post { background: #ffcc00; color: black; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-top: 20px; text-transform: uppercase; transition: 0.3s; }
-        .btn-post:hover { background: #ffd633; transform: translateY(-2px); }
+        .media-choice { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; }
 
-        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 15px; background: #222; border-radius: 8px 8px 0 0; border-bottom: 2px solid #ffcc00; }
-        .search-area input { width: 280px; background: white; color: black; font-weight: bold; border-radius: 4px; padding: 10px; border:none; }
-        
-        table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-bottom: 50px; }
+        .btn-post { background: var(--verdh); color: black; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-top: 20px; text-transform: uppercase; }
+        .btn-post:hover { background: #e6b800; }
+
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-top: 50px; padding: 15px; background: #222; border-radius: 8px 8px 0 0; border-bottom: 2px solid var(--verdh); }
+        #searchInput { width: 300px; padding: 10px; border-radius: 20px; border: 1px solid var(--verdh); background: white; color: black; }
+
+        table { width: 100%; border-collapse: collapse; background: #1a1a1a; }
         th, td { padding: 15px; border-bottom: 1px solid #333; text-align: left; }
-        th { color: #ffcc00; text-transform: uppercase; }
+        th { color: var(--verdh); text-transform: uppercase; font-size: 12px; }
         
         .btn-shlyej { background: #ff3333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .preview-media { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; }
@@ -33,7 +40,7 @@
 <body>
 
 <div class="container">
-    <h2>ADMIN PANEL - KANAL DRENAS</h2>
+    <h2>PANELI I KONTROLLIT - KANAL DRENAS</h2>
 
     <div class="form-grid">
         <div class="full-width">
@@ -41,9 +48,16 @@
             <input type="text" id="title" placeholder="Shkruaj titullin kryesor...">
         </div>
         
-        <div>
-            <label>Ngarko Foto ose Video (Nga pajisja)</label>
+        <div class="media-choice">
+            <label>Opsioni 1: Ngarko nga Pajisja (Foto/Video)</label>
             <input type="file" id="mediaFile" accept="image/*,video/*">
+            <p style="font-size: 11px; color: #888; margin: 5px 0;">*Zgjedh file-in nese e ke ne telefon/PC</p>
+        </div>
+
+        <div class="media-choice">
+            <label>Opsioni 2: Foto/Video nga Interneti (URL)</label>
+            <input type="text" id="mediaURL" placeholder="Ngjit linkun (http://...)">
+            <p style="font-size: 11px; color: #888; margin: 5px 0;">*Ngjit linkun nese e ke nga FB/Google</p>
         </div>
         
         <div>
@@ -54,6 +68,7 @@
         <div>
             <label>Kategoria</label>
             <select id="category">
+                <option value="KRYESORE">KRYESORE</option>
                 <option value="DRENICA">DRENICA</option>
                 <option value="SPORT">SPORT</option>
                 <option value="SHOWBIZ">SHOWBIZ</option>
@@ -67,13 +82,11 @@
         </div>
     </div>
 
-    <button class="btn-post" onclick="publikoLajmin()">PUBLIKO LAJMIN TANI</button>
+    <button class="btn-post" onclick="pergatitLajmin()">PUBLIKO LAJMIN TANI</button>
 
     <div class="admin-header">
-        <h3 style="margin:0;">MENAXHIMI I LAJMEVE</h3>
-        <div class="search-area">
-            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Kërko titullin...">
-        </div>
+        <h3 style="margin:0;">ARKIVA E LAJMEVE</h3>
+        <input type="text" id="searchInput" onkeyup="filtroTabelen()" placeholder="Kërko titullin për shlyerje...">
     </div>
 
     <table>
@@ -90,85 +103,103 @@
 </div>
 
 <script>
-    window.onload = shfaqLajmet;
+    // LIDHJA ME FIREBASE (Saktësisht si te Index)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
+        authDomain: "herolind-6ca5f.firebaseapp.com",
+        databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "herolind-6ca5f",
+        storageBucket: "herolind-6ca5f.appspot.com",
+        messagingSenderId: "893085364638",
+        appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    function publikoLajmin() {
+    let lajmetLokale = []; // Per search
+
+    // 1. NGARKIMI I LAJMEVE NE TABELE
+    db.ref('lajmet').on('value', (snap) => {
+        const lista = document.getElementById('listaLajmeve');
+        lista.innerHTML = "";
+        lajmetLokale = [];
+        
+        snap.forEach((child) => {
+            const l = child.val();
+            const key = child.key;
+            lajmetLokale.push({key, ...l});
+
+            const rreshti = `
+                <tr>
+                    <td><img src="${l.foto}" class="preview-media" onerror="this.src='https://via.placeholder.com/60/333/fff?text=Media'"></td>
+                    <td><strong>${l.titulli}</strong></td>
+                    <td style="color:#ffcc00">${l.kategoria}</td>
+                    <td><button class="btn-shlyej" onclick="shlyejLajmin('${key}')">SHLYEJ</button></td>
+                </tr>
+            `;
+            lista.innerHTML = rreshti + lista.innerHTML;
+        });
+    });
+
+    // 2. FUNKSIONI PER PUBLIKIM
+    async function pergatitLajmin() {
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const category = document.getElementById('category').value;
         const content = document.getElementById('content').value;
+        const mediaURL = document.getElementById('mediaURL').value;
         const fileInput = document.getElementById('mediaFile');
         const file = fileInput.files[0];
 
-        if(!title || !author) {
-            alert("Ju lutem plotësoni Titullin dhe Autorin!");
+        if(!title || !author || !content) {
+            alert("Ju lutem plotësoni Titullin, Autorin dhe Përmbajtjen!");
             return;
         }
 
-        // Nëse ka fajll (foto/video), e kthejmë në Base64 që ta ruajmë
-        if (file) {
+        let finalMedia = mediaURL || "https://via.placeholder.com/800x450?text=KANAL+DRENAS";
+
+        // Nese ka file nga PC, e kthejme ne Base64
+        if(file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                saveToStorage(title, author, category, content, e.target.result, file.type);
-            };
             reader.readAsDataURL(file);
+            reader.onload = function () {
+                dergoNeFirebase(title, author, category, content, reader.result);
+            };
         } else {
-            saveToStorage(title, author, category, content, 'https://via.placeholder.com/800x450?text=KANAL+DRENAS', 'image/png');
+            dergoNeFirebase(title, author, category, content, finalMedia);
         }
     }
 
-    function saveToStorage(title, author, category, content, mediaData, mediaType) {
-        const lajmiRi = {
-            id: Date.now(),
-            titulli: title,
-            autori: author,
-            kategoria: category,
-            teksti: content,
-            media: mediaData,
-            tipi: mediaType
-        };
-
-        let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
-        arkiva.unshift(lajmiRi);
-        localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
-
-        alert("Lajmi u publikua me sukses!");
-        location.reload(); // Rifresko faqen për të pastruar fushave
-    }
-
-    function shfaqLajmet() {
-        const arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
-        const lista = document.getElementById('listaLajmeve');
-        lista.innerHTML = "";
-
-        arkiva.forEach(l => {
-            let mediaPreview = l.tipi.includes('video') ? '🎥 Video' : `<img src="${l.media}" class="preview-media">`;
-            const rreshti = lista.insertRow();
-            rreshti.innerHTML = `
-                <td>${mediaPreview}</td>
-                <td><strong>${l.titulli}</strong></td>
-                <td>${l.kategoria}</td>
-                <td><button class="btn-shlyej" onclick="shlyejLajmin(${l.id})">SHLYEJ</button></td>
-            `;
+    function dergoNeFirebase(t, a, c, p, m) {
+        db.ref('lajmet').push({
+            titulli: t,
+            autor: a,
+            kategoria: c,
+            pershkrimi: p,
+            foto: m,
+            data: new Date().toISOString()
+        }).then(() => {
+            alert("Lajmi u publikua në Ballinë!");
+            location.reload();
         });
     }
 
+    // 3. SHLYERJA (DELETE)
     function shlyejLajmin(id) {
-        if(confirm("A jeni i sigurt?")) {
-            let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
-            arkiva = arkiva.filter(l => l.id !== id);
-            localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
-            shfaqLajmet();
+        if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm nga Web?")) {
+            db.ref('lajmet/' + id).remove();
         }
     }
 
-    function searchFunction() {
-        let filter = document.getElementById('searchInput').value.toLowerCase();
-        let rreshtat = document.getElementById('listaLajmeve').getElementsByTagName('tr');
-        for (let i = 0; i < rreshtat.length; i++) {
-            let titulli = rreshtat[i].getElementsByTagName('td')[1].innerText.toLowerCase();
-            rreshtat[i].style.display = titulli.includes(filter) ? "" : "none";
-        }
+    // 4. SEARCH (FILTRIMI)
+    function filtroTabelen() {
+        const kerko = document.getElementById('searchInput').value.toLowerCase();
+        const rreshtat = document.querySelectorAll("#listaLajmeve tr");
+        
+        rreshtat.forEach(rr => {
+            const teksti = rr.innerText.toLowerCase();
+            rr.style.display = teksti.includes(kerko) ? "" : "none";
+        });
     }
 </script>
 
