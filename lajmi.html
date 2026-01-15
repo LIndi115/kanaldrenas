@@ -9,8 +9,9 @@
     <meta property="og:url" id="fb-url" content="">
     <meta property="og:title" id="fb-title" content="KANAL DRENAS">
     <meta property="og:description" id="fb-desc" content="Lexoni lajmin e plotë në Kanal Drenas">
-    <meta property="og:image" id="fb-img" content="https://raw.githubusercontent.com/lindi115/kanaldrenas/main/logo.jpg">
-    <meta property="fb:app_id" content="966242223397117">
+    <meta property="og:image" id="fb-img" content="https://lindi115.github.io/kanaldrenas/logo.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -102,16 +103,16 @@
             firebase.database().ref('lajmet/' + lajmiId).on('value', (snap) => {
                 const data = snap.val();
                 if(data) {
-                    // 1. Shfaq të dhënat në faqe
+                    // Vendos të dhënat në HTML
                     document.getElementById('titulli').innerText = data.titulli;
                     document.title = data.titulli + " | KANAL DRENAS";
                     document.getElementById('teksti').innerText = data.pershkrimi;
 
-                    // 2. Përditëso Meta Tags për Facebook dinamikisht
+                    // Përditëso Meta Tags për Facebook
                     document.getElementById('fb-title').setAttribute('content', data.titulli);
-                    document.getElementById('fb-url').setAttribute('content', window.location.href);
                     document.getElementById('fb-desc').setAttribute('content', data.pershkrimi.substring(0, 150) + "...");
-                    
+                    document.getElementById('fb-url').setAttribute('content', window.location.href);
+
                     if(data.foto) {
                         document.getElementById('fb-img').setAttribute('content', data.foto);
                         const imgTag = document.getElementById('foto');
@@ -119,12 +120,11 @@
                         imgTag.style.display = "block";
                     }
 
-                    // 3. Autor dhe Data
                     const koha = new Date(data.data);
                     document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
                     document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                    // 4. Trajtimi i Videos
+                    // Rregullimi i Videos
                     if(data.video && data.video.trim() !== "") {
                         const vId = merrYoutubeID(data.video);
                         if(vId) {
