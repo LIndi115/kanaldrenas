@@ -34,22 +34,29 @@
         
         /* LAJMI GRID */
         .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .card { background: var(--gri-lehte); border-radius: 12px; overflow: hidden; border: 1px solid #222; transition: 0.3s; display: flex; flex-direction: column; }
+        .card { background: var(--gri-lehte); border-radius: 12px; overflow: hidden; border: 1px solid #222; transition: 0.3s; display: flex; flex-direction: column; position: relative; }
         .card:hover { transform: translateY(-5px); border-color: var(--verdh); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
+        
+        .image-container { position: relative; width: 100%; height: 210px; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Ikona Play mbi foto */
+        .video-icon { 
+            position: absolute; top: 10px; right: 10px; 
+            background: rgba(0,0,0,0.7); color: var(--verdh); 
+            padding: 5px 8px; border-radius: 5px; font-size: 18px; 
+        }
         
         .card-content { padding: 18px; flex-grow: 1; }
         .kat { background: var(--verdh); color: var(--zi); font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
         .card h2 { font-size: 19px; margin: 12px 0; line-height: 1.4; color: #fff; }
         
-        /* META DATA */
         .meta { font-size: 12px; color: #888; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #282828; padding-bottom: 10px; }
         .meta strong { color: var(--verdh); }
 
         .pershkrimi { font-size: 14px; color: #bbb; line-height: 1.6; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .btn-lexo { margin-top: auto; display: inline-block; background: var(--verdh); color: var(--zi); padding: 10px; text-align: center; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; }
 
-        /* FOOTER */
         footer { background: var(--gri); padding: 40px 20px; text-align: center; margin-top: 50px; border-top: 1px solid #222; }
         .footer-links { margin-bottom: 20px; }
         .footer-links a { color: #888; text-decoration: none; margin: 0 15px; font-size: 14px; }
@@ -78,8 +85,7 @@
 
     <div class="container">
         <h2 id="titulli-faqes" class="section-title">Lajmet e fundit</h2>
-        <div id="lajmet-list" class="lajmi-grid">
-            </div>
+        <div id="lajmet-list" class="lajmi-grid"></div>
     </div>
 
     <footer>
@@ -104,13 +110,24 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        let teGjithaLajmet = []; // Variabël për të ruajtur lajmet për kërkim
+        let teGjithaLajmet = [];
 
-        // Filtri i kategorive nga URL
         const urlParams = new URLSearchParams(window.location.search);
         const kategoriaZgjedhur = urlParams.get('kat');
         if(kategoriaZgjedhur) {
             document.getElementById('titulli-faqes').innerText = "Kategoria: " + kategoriaZgjedhur;
+        }
+
+        // FUNKSIONI QE NDREQ LINKUN E YOUTUBE
+        function ktheNeEmbed(url) {
+            if (!url) return "";
+            if (url.includes("youtube.com/watch?v=")) {
+                return url.replace("watch?v=", "embed/");
+            } else if (url.includes("youtu.be/")) {
+                let id = url.split("/").pop();
+                return "https://www.youtube.com/embed/" + id;
+            }
+            return url;
         }
 
         db.ref('lajmet').on('value', (snap) => {
@@ -133,9 +150,15 @@
                 const dataFormat = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
                 const oraFormat = koha.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' });
 
+                // Kontrollojme nese ka video per te qitur ikonen
+                const ikonaVideo = item.video ? `<div class="video-icon">🎥</div>` : "";
+
                 list.innerHTML += `
                     <div class="card">
-                        <img src="${item.foto}" alt="${item.titulli}">
+                        <div class="image-container">
+                            ${ikonaVideo}
+                            <img src="${item.foto}" alt="${item.titulli}">
+                        </div>
                         <div class="card-content">
                             <span class="kat">${item.kategoria}</span>
                             <h2>${item.titulli}</h2>
@@ -151,7 +174,6 @@
             });
         }
 
-        // Funksioni i Kërkimit
         function filtroLajmet() {
             const fjalaKyce = document.getElementById('searchInput').value.toLowerCase();
             const lajmetEFiltruara = teGjithaLajmet.filter(lajm => {
