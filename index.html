@@ -3,136 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KANAL DRENAS | Portali Informativ</title>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <title>KANAL DRENAS - Portali Informativ</title>
     <style>
-        :root { --verdh: #ffcc00; --zi: #000; --gri: #111; --gri-lehte: #1a1a1a; }
-        body { background: var(--zi); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        /* DIZAJNI JOT I PREFERUAR */
+        body { font-family: 'Arial', sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
         
-        /* HEADER & NAV */
-        header { background: var(--gri); border-bottom: 3px solid var(--verdh); position: sticky; top: 0; z-index: 1000; }
-        .header-top { padding: 20px; text-align: center; }
-        .logo { font-size: 32px; font-weight: 900; text-transform: uppercase; text-decoration: none; color: white; }
-        .logo span { background: var(--verdh); color: var(--zi); padding: 2px 10px; border-radius: 4px; }
-        
-        nav { background: #050505; display: flex; justify-content: center; flex-wrap: wrap; border-top: 1px solid #222; }
-        nav a { color: white; text-decoration: none; padding: 12px 18px; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
-        nav a:hover { color: var(--verdh); background: #111; }
+        header { background-color: #000; color: #ffcc00; padding: 30px; text-align: center; border-bottom: 5px solid #ffcc00; }
+        header h1 { margin: 0; font-size: 40px; text-transform: uppercase; letter-spacing: 4px; }
 
-        /* CONTAINER */
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-        .section-title { border-left: 5px solid var(--verdh); padding-left: 15px; margin-bottom: 30px; text-transform: uppercase; }
-        
-        /* LAJMI GRID */
-        .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .card { background: var(--gri-lehte); border-radius: 12px; overflow: hidden; border: 1px solid #222; transition: 0.3s; display: flex; flex-direction: column; }
-        .card:hover { transform: translateY(-5px); border-color: var(--verdh); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        
-        .card-content { padding: 18px; flex-grow: 1; }
-        .kat { background: var(--verdh); color: var(--zi); font-size: 10px; font-weight: bold; padding: 3px 8px; border-radius: 3px; text-transform: uppercase; }
-        .card h2 { font-size: 19px; margin: 12px 0; line-height: 1.4; color: #fff; }
-        
-        /* META DATA */
-        .meta { font-size: 12px; color: #888; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #282828; padding-bottom: 10px; }
-        .meta strong { color: var(--verdh); }
+        nav { background: #222; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1000; }
+        nav a { color: white; text-decoration: none; padding: 0 20px; font-weight: bold; text-transform: uppercase; font-size: 15px; }
+        nav a:hover { color: #ffcc00; }
 
-        .pershkrimi { font-size: 14px; color: #bbb; line-height: 1.6; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .btn-lexo { margin-top: auto; display: inline-block; background: var(--verdh); color: var(--zi); padding: 10px; text-align: center; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        .main-container { max-width: 1200px; margin: 25px auto; display: flex; gap: 25px; padding: 0 20px; }
 
-        /* FOOTER */
-        footer { background: var(--gri); padding: 40px 20px; text-align: center; margin-top: 50px; border-top: 1px solid #222; }
-        .footer-links { margin-bottom: 20px; }
-        .footer-links a { color: #888; text-decoration: none; margin: 0 15px; font-size: 14px; }
-        .footer-links a:hover { color: var(--verdh); }
+        /* PJESA E LAJMEVE */
+        .content-area { flex: 2; }
+        .section-title { background: #000; color: #ffcc00; padding: 10px 15px; margin-bottom: 20px; border-left: 6px solid #ffcc00; text-transform: uppercase; }
+
+        .news-card { background: white; margin-bottom: 30px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .news-card img { width: 100%; height: auto; max-height: 450px; object-fit: cover; display: block; }
+        .news-info { padding: 25px; }
+        .news-info h2 { margin: 0 0 15px 0; color: #111; font-size: 28px; line-height: 1.2; }
+        .news-info p { color: #333; line-height: 1.7; font-size: 17px; }
+        
+        .news-meta { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; color: #666; }
+        .category-badge { background: #ffcc00; color: #000; padding: 3px 10px; border-radius: 3px; text-transform: uppercase; }
+
+        /* SIDEBAR (REKLAMAT) */
+        .sidebar { flex: 1; }
+        .ad-box { background: #ddd; border: 2px dashed #999; height: 300px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; color: #666; font-weight: bold; }
+
+        @media (max-width: 850px) {
+            .main-container { flex-direction: column; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-top">
-            <a href="index.html" class="logo"><span>KANAL</span> DRENAS</a>
-        </div>
-        <nav>
-            <a href="index.html">Ballina</a>
-            <a href="?kat=KRYESORE">Kryesore</a>
-            <a href="?kat=DRENICA">Drenica</a>
-            <a href="?kat=SPORT">Sport</a>
-            <a href="?kat=SHOWBIZ">Showbiz</a>
-            <a href="?kat=DIASPORA">Diaspora</a>
-        </nav>
-    </header>
+<header>
+    <h1>KANAL DRENAS</h1>
+</header>
 
-    <div class="container">
-        <h2 id="titulli-faqes" class="section-title">Lajmet e fundit</h2>
-        <div id="lajmet-list" class="lajmi-grid">
-            </div>
+<nav>
+    <a href="#">Ballina</a>
+    <a href="#">Drenica</a>
+    <a href="#">Sport</a>
+    <a href="#">Showbiz</a>
+    <a href="#">Diaspora</a>
+</nav>
+
+<div class="main-container">
+    <div class="content-area">
+        <div class="section-title">Lajmet e Fundit</div>
+        
+        <div id="lajmetVendi"></div>
     </div>
 
-    <footer>
-        <div class="footer-links">
-            <a href="rreth-nesh.html">Rreth Nesh</a>
-            <a href="kontakti.html">Kontakti</a>
-            <a href="privatesia.html">Politika e Privatësisë</a>
-        </div>
-        <p style="color:#555; font-size: 13px;">&copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.</p>
-    </footer>
+    <div class="sidebar">
+        <div class="section-title">Reklama</div>
+        <div class="ad-box">REKLAMA 1 (VENDI JOT)</div>
+        <div class="ad-box">REKLAMA 2 (VENDI JOT)</div>
+    </div>
+</div>
 
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
-            authDomain: "herolind-6ca5f.firebaseapp.com",
-            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "herolind-6ca5f",
-            storageBucket: "herolind-6ca5f.appspot.com",
-            messagingSenderId: "893085364638",
-            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+<script>
+    function ngarkoLajmet() {
+        // Merr lajmet nga memoria e adminit
+        const arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
+        const divi = document.getElementById('lajmetVendi');
 
-        // Filtri i kategorive
-        const urlParams = new URLSearchParams(window.location.search);
-        const kategoriaZgjedhur = urlParams.get('kat');
-        if(kategoriaZgjedhur) {
-            document.getElementById('titulli-faqes').innerText = "Kategoria: " + kategoriaZgjedhur;
+        if (arkiva.length === 0) {
+            divi.innerHTML = "<div style='background:white; padding:20px; border-radius:8px;'>Nuk ka asnjë lajm të publikuar deri tani. Shko te Paneli për të postuar.</div>";
+            return;
         }
 
-        db.ref('lajmet').on('value', (snap) => {
-            const list = document.getElementById('lajmet-list');
-            list.innerHTML = '';
-            let items = [];
-            
-            snap.forEach((child) => {
-                const data = child.val();
-                if(!kategoriaZgjedhur || data.kategoria === kategoriaZgjedhur) {
-                    items.push({id: child.key, ...data});
-                }
-            });
+        divi.innerHTML = ""; // Pastro tekstin "Nuk ka lajme"
 
-            items.reverse().forEach((item) => {
-                const koha = new Date(item.data);
-                const dataFormat = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
-                const oraFormat = koha.toLocaleTimeString('sq-AL', { hour: '2-digit', minute: '2-digit' });
-
-                list.innerHTML += `
-                    <div class="card">
-                        <img src="${item.foto}" alt="${item.titulli}">
-                        <div class="card-content">
-                            <span class="kat">${item.kategoria}</span>
-                            <h2>${item.titulli}</h2>
-                            <div class="meta">
-                                <span><strong>Nga:</strong> ${item.autor || 'Redaksia'}</span>
-                                <span><strong>Më:</strong> ${dataFormat} | ${oraFormat}</span>
-                            </div>
-                            <p class="pershkrimi">${item.pershkrimi}</p>
-                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">LEXO LAJMIN E PLOTË</a>
+        arkiva.forEach(lajmi => {
+            divi.innerHTML += `
+                <div class="news-card">
+                    <img src="${lajmi.foto}" onerror="this.src='https://via.placeholder.com/800x450?text=KANAL+DRENAS'">
+                    <div class="news-info">
+                        <h2>${lajmi.titulli}</h2>
+                        <p>${lajmi.teksti}</p>
+                        <div class="news-meta">
+                            <span><span class="category-badge">${lajmi.kategoria}</span> NGA: ${lajmi.autori}</span>
+                            <span>Sapo u publikua</span>
                         </div>
                     </div>
-                `;
-            });
+                </div>
+            `;
         });
-    </script>
+    }
+
+    // Kjo e ndez funksionin sapo hapet faqja
+    window.onload = ngarkoLajmet;
+</script>
+
 </body>
 </html>
