@@ -36,6 +36,13 @@
         
         .content { line-height: 1.8; font-size: 18px; color: #ddd; margin-top: 25px; white-space: pre-wrap; }
         
+        /* Stili për butonat Share */
+        .share-box { margin-top: 30px; padding: 20px 0; border-top: 1px solid #333; text-align: center; }
+        .share-btn { display: inline-block; padding: 10px 20px; margin: 5px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold; font-size: 14px; transition: 0.3s; }
+        .btn-fb { background: #1877F2; }
+        .btn-wa { background: #25D366; }
+        .share-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+
         .btn-back { display: inline-block; margin-top: 30px; color: var(--verdh); text-decoration: none; font-weight: bold; border: 1px solid var(--verdh); padding: 10px 20px; border-radius: 5px; transition: 0.3s; }
         .btn-back:hover { background: var(--verdh); color: black; }
         
@@ -62,6 +69,12 @@
 
             <div class="content">
                 <p id="teksti"></p>
+            </div>
+
+            <div class="share-box">
+                <p style="color: #888; font-size: 14px; margin-bottom: 10px;">SHPËRNDAJE LAJMIN:</p>
+                <a id="share-fb" href="#" target="_blank" class="share-btn btn-fb">Facebook</a>
+                <a id="share-wa" href="#" target="_blank" class="share-btn btn-wa">WhatsApp</a>
             </div>
 
             <a href="index.html" class="btn-back">← KTHEHU TE BALLINA</a>
@@ -104,7 +117,6 @@
             firebase.database().ref('lajmet/' + lajmiId).on('value', (snap) => {
                 const data = snap.val();
                 if(data) {
-                    // Vendos të dhënat në HTML
                     document.getElementById('titulli').innerText = data.titulli;
                     document.title = data.titulli + " | KANAL DRENAS";
                     document.getElementById('teksti').innerText = data.pershkrimi;
@@ -121,11 +133,16 @@
                         imgTag.style.display = "block";
                     }
 
+                    // Aktivizo butonat e shpërndarjes
+                    const shareUrl = encodeURIComponent(window.location.href);
+                    const shareTitle = encodeURIComponent(data.titulli);
+                    document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
+                    document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${shareTitle}%20${shareUrl}`;
+
                     const koha = new Date(data.data);
                     document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
                     document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-                    // Rregullimi i Videos
                     if(data.video && data.video.trim() !== "") {
                         const vId = merrYoutubeID(data.video);
                         if(vId) {
@@ -140,8 +157,6 @@
                                 </div>`;
                         }
                     }
-                } else {
-                    document.getElementById('titulli').innerText = "Lajmi nuk u gjet!";
                 }
             });
         } else {
