@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kanal Drenas - Admin Panel (Firebase Edition)</title>
+    <title>Kanal Drenas - Admin Panel (V3)</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     
@@ -21,7 +21,15 @@
         input, select, textarea { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: #222; color: white; box-sizing: border-box; }
         input:focus { border-color: var(--verdh); outline: none; }
 
-        .media-choice { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        .media-choice { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid #333; position: relative; }
+        
+        /* Butoni X për heqjen e fotos nga PC */
+        .remove-file { 
+            position: absolute; right: 10px; top: 10px; 
+            background: #ff3333; color: white; border: none; 
+            border-radius: 50%; width: 25px; height: 25px; 
+            cursor: pointer; display: none; font-weight: bold;
+        }
 
         .btn-post { background: var(--verdh); color: black; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-top: 20px; text-transform: uppercase; }
         .btn-post:hover { background: #e6b800; }
@@ -49,15 +57,19 @@
         </div>
         
         <div class="media-choice">
-            <label>Opsioni 1: Ngarko nga Pajisja (Foto/Video)</label>
-            <input type="file" id="mediaFile" accept="image/*,video/*">
-            <p style="font-size: 11px; color: #888; margin: 5px 0;">*Zgjedh file-in nese e ke ne telefon/PC</p>
+            <button class="remove-file" id="removeFileBtn" onclick="clearFileInput()">X</button>
+            <label>Ngarko Foto/Video nga Pajisja</label>
+            <input type="file" id="mediaFile" accept="image/*,video/*" onchange="toggleXBtn()">
         </div>
 
         <div class="media-choice">
-            <label>Opsioni 2: Foto/Video nga Interneti (URL)</label>
-            <input type="text" id="mediaURL" placeholder="Ngjit linkun (http://...)">
-            <p style="font-size: 11px; color: #888; margin: 5px 0;">*Ngjit linkun nese e ke nga FB/Google</p>
+            <label>Linku i Fotos nga Interneti (URL)</label>
+            <input type="text" id="mediaURL" placeholder="Ngjit linkun e fotos (http://...)">
+        </div>
+
+        <div class="media-choice full-width">
+            <label>Linku i Videos nga Interneti (YouTube / FB Video URL)</label>
+            <input type="text" id="videoURL" placeholder="Ngjit linkun e videos këtu...">
         </div>
         
         <div>
@@ -103,7 +115,6 @@
 </div>
 
 <script>
-    // LIDHJA ME FIREBASE (Saktësisht si te Index)
     const firebaseConfig = {
         apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
         authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -116,22 +127,28 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    let lajmetLokale = []; // Per search
+    // Funksionet për butonin X
+    function toggleXBtn() {
+        const fileInput = document.getElementById('mediaFile');
+        const xBtn = document.getElementById('removeFileBtn');
+        xBtn.style.display = fileInput.files.length > 0 ? "block" : "none";
+    }
 
-    // 1. NGARKIMI I LAJMEVE NE TABELE
+    function clearFileInput() {
+        document.getElementById('mediaFile').value = "";
+        toggleXBtn();
+    }
+
+    // NGARKIMI I TABELES
     db.ref('lajmet').on('value', (snap) => {
         const lista = document.getElementById('listaLajmeve');
         lista.innerHTML = "";
-        lajmetLokale = [];
-        
         snap.forEach((child) => {
             const l = child.val();
             const key = child.key;
-            lajmetLokale.push({key, ...l});
-
             const rreshti = `
                 <tr>
-                    <td><img src="${l.foto}" class="preview-media" onerror="this.src='https://via.placeholder.com/60/333/fff?text=Media'"></td>
+                    <td><img src="${l.foto}" class="preview-media" onerror="this.src='https://via.placeholder.com/60/333/fff?text=Lajm'"></td>
                     <td><strong>${l.titulli}</strong></td>
                     <td style="color:#ffcc00">${l.kategoria}</td>
                     <td><button class="btn-shlyej" onclick="shlyejLajmin('${key}')">SHLYEJ</button></td>
@@ -141,67 +158,62 @@
         });
     });
 
-    // 2. FUNKSIONI PER PUBLIKIM
+    // PUBLIKIMI
     async function pergatitLajmin() {
         const title = document.getElementById('title').value;
         const author = document.getElementById('author').value;
         const category = document.getElementById('category').value;
         const content = document.getElementById('content').value;
         const mediaURL = document.getElementById('mediaURL').value;
+        const videoURL = document.getElementById('videoURL').value;
         const fileInput = document.getElementById('mediaFile');
         const file = fileInput.files[0];
 
         if(!title || !author || !content) {
-            alert("Ju lutem plotësoni Titullin, Autorin dhe Përmbajtjen!");
+            alert("Plotesoni fushat kryesore!");
             return;
         }
 
+        // Prioriteti: 1. PC File, 2. URL Foto, 3. Placeholder
         let finalMedia = mediaURL || "https://via.placeholder.com/800x450?text=KANAL+DRENAS";
 
-        // Nese ka file nga PC, e kthejme ne Base64
         if(file) {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = function () {
-                dergoNeFirebase(title, author, category, content, reader.result);
+                dergoNeFirebase(title, author, category, content, reader.result, videoURL);
             };
         } else {
-            dergoNeFirebase(title, author, category, content, finalMedia);
+            dergoNeFirebase(title, author, category, content, finalMedia, videoURL);
         }
     }
 
-    function dergoNeFirebase(t, a, c, p, m) {
+    function dergoNeFirebase(t, a, c, p, m, v) {
         db.ref('lajmet').push({
             titulli: t,
             autor: a,
             kategoria: c,
             pershkrimi: p,
             foto: m,
+            video: v || "",
             data: new Date().toISOString()
         }).then(() => {
-            alert("Lajmi u publikua në Ballinë!");
+            alert("Lajmi u publikua!");
             location.reload();
         });
     }
 
-    // 3. SHLYERJA (DELETE)
     function shlyejLajmin(id) {
-        if(confirm("A jeni i sigurt që dëshironi ta fshini këtë lajm nga Web?")) {
-            db.ref('lajmet/' + id).remove();
-        }
+        if(confirm("Fshije?")) db.ref('lajmet/' + id).remove();
     }
 
-    // 4. SEARCH (FILTRIMI)
     function filtroTabelen() {
         const kerko = document.getElementById('searchInput').value.toLowerCase();
         const rreshtat = document.querySelectorAll("#listaLajmeve tr");
-        
         rreshtat.forEach(rr => {
-            const teksti = rr.innerText.toLowerCase();
-            rr.style.display = teksti.includes(kerko) ? "" : "none";
+            rr.style.display = rr.innerText.toLowerCase().includes(kerko) ? "" : "none";
         });
     }
 </script>
-
 </body>
 </html>
