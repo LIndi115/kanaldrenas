@@ -6,11 +6,10 @@
     <title>Kanal Drenas - Admin Panel</title>
     <style>
         body { font-family: 'Arial', sans-serif; background-color: #000; color: white; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: #111; padding: 25px; border-radius: 12px; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.2); }
+        .container { max-width: 1000px; margin: auto; background: #111; padding: 25px; border-radius: 12px; border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.4); }
         
         h2 { text-align: center; color: #ffcc00; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 30px; border-bottom: 2px solid #ffcc00; padding-bottom: 10px; }
         
-        /* Layout i Formës */
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .full-width { grid-column: span 2; }
         
@@ -21,23 +20,19 @@
         .btn-post { background: #ffcc00; color: black; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px; margin-top: 20px; text-transform: uppercase; transition: 0.3s; }
         .btn-post:hover { background: #ffd633; transform: translateY(-2px); }
 
-        /* Seksioni Search dhe Menaxhimi */
         .admin-header { display: flex; justify-content: space-between; align-items: center; margin-top: 60px; padding: 15px; background: #222; border-radius: 8px 8px 0 0; border-bottom: 2px solid #ffcc00; }
         
         .search-area { display: flex; gap: 10px; }
-        #searchInput { width: 280px; background: white; color: black; font-weight: bold; border-radius: 4px; }
+        #searchInput { width: 280px; background: white; color: black; font-weight: bold; border-radius: 4px; padding: 10px; }
         
-        .btn-search { background: #ffcc00; color: black; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-
-        /* Tabela e Listimit */
         table { width: 100%; border-collapse: collapse; background: #1a1a1a; margin-bottom: 50px; }
         th, td { padding: 15px; border-bottom: 1px solid #333; text-align: left; }
         th { color: #ffcc00; text-transform: uppercase; font-size: 13px; }
         
-        .btn-shlyej { background: #ff3333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .btn-shlyej { background: #ff3333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-shlyej:hover { background: #cc0000; }
         
-        .preview-box { width: 50px; height: 35px; background: #333; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 9px; color: #777; }
+        .preview-img { width: 60px; height: 40px; object-fit: cover; border-radius: 4px; background: #333; }
     </style>
 </head>
 <body>
@@ -52,8 +47,8 @@
         </div>
         
         <div>
-            <label>Ngarko Foto ose Video</label>
-            <input type="file" id="mediaFile" accept="image/*,video/*">
+            <label>Linku i Fotos (URL)</label>
+            <input type="text" id="mediaLink" placeholder="Ngjit linkun e fotos këtu...">
         </div>
         
         <div>
@@ -62,7 +57,7 @@
         </div>
 
         <div>
-            <label>Kategoria Kryesore</label>
+            <label>Kategoria</label>
             <select id="category">
                 <option value="KRYESORE">KRYESORE</option>
                 <option value="DRENICA">DRENICA</option>
@@ -73,94 +68,106 @@
         </div>
 
         <div>
-            <label>Linku i Medias (Nëse ka)</label>
-            <input type="text" id="mediaLink" placeholder="Link nga FB ose YouTube...">
+            <label>Video Link (Opsionale)</label>
+            <input type="text" id="videoLink" placeholder="Link nga YouTube ose FB...">
         </div>
 
         <div class="full-width">
             <label>Përmbajtja e Lajmit</label>
-            <textarea id="content" rows="6" placeholder="Shkruaj tekstin e plotë të lajmit këtu..."></textarea>
+            <textarea id="content" rows="6" placeholder="Shkruaj tekstin e plotë të lajmit..."></textarea>
         </div>
     </div>
 
     <button class="btn-post" onclick="publikoLajmin()">PUBLIKO LAJMIN TANI</button>
 
     <div class="admin-header">
-        <h3 style="margin:0; font-size: 18px;">LAJMET E FUNDIT</h3>
+        <h3 style="margin:0;">MENAXHIMI I LAJMEVE</h3>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Kërko titullin për ta shlyer...">
-            <button class="btn-search" onclick="searchFunction()">SEARCH</button>
+            <input type="text" id="searchInput" onkeyup="searchFunction()" placeholder="Kërko titullin...">
         </div>
     </div>
 
-    <table id="lajmetTable">
+    <table>
         <thead>
             <tr>
-                <th>Media</th>
+                <th>Foto</th>
                 <th>Titulli</th>
                 <th>Autori</th>
                 <th>Kategoria</th>
                 <th>Veprimi</th>
             </tr>
         </thead>
-        <tbody id="listaLajmeve">
-            </tbody>
+        <tbody id="listaLajmeve"></tbody>
     </table>
 </div>
 
 <script>
+    // Kur hapet faqja, shfaq lajmet e ruajtura
+    window.onload = shfaqLajmet;
+
     function publikoLajmin() {
         const titulli = document.getElementById('title').value;
         const autori = document.getElementById('author').value;
         const kategoria = document.getElementById('category').value;
-        
+        const foto = document.getElementById('mediaLink').value;
+        const teksti = document.getElementById('content').value;
+
         if(titulli === "" || autori === "") {
-            alert("Mungon Titulli ose Autori!");
+            alert("Ju lutem plotësoni Titullin dhe Autorin!");
             return;
         }
 
-        const tabela = document.getElementById('listaLajmeve');
-        const rreshti = tabela.insertRow(0);
+        const lajmiRi = {
+            id: Date.now(),
+            titulli: titulli,
+            autori: autori,
+            kategoria: kategoria,
+            foto: foto || 'https://via.placeholder.com/60x40?text=No+Img',
+            teksti: teksti
+        };
 
-        rreshti.innerHTML = `
-            <td><div class="preview-box">MEDIA</div></td>
-            <td><strong>${titulli}</strong></td>
-            <td>${autori}</td>
-            <td><span style="color:#ffcc00">${kategoria}</span></td>
-            <td><button class="btn-shlyej" onclick="shlyejLajmin(this)">SHLYEJ</button></td>
-        `;
+        let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
+        arkiva.unshift(lajmiRi);
+        localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
 
-        // Pastrimi i fushave
+        alert("Lajmi u publikua me sukses!");
         document.getElementById('title').value = "";
-        alert("Lajmi u dërgua në sistem!");
+        document.getElementById('content').value = "";
+        shfaqLajmet();
     }
 
-    // Funksioni Search me Enter
+    function shfaqLajmet() {
+        const arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
+        const lista = document.getElementById('listaLajmeve');
+        lista.innerHTML = "";
+
+        arkiva.forEach(lajmi => {
+            const rreshti = lista.insertRow();
+            rreshti.innerHTML = `
+                <td><img src="${lajmi.foto}" class="preview-img"></td>
+                <td><strong>${lajmi.titulli}</strong></td>
+                <td>${lajmi.autori}</td>
+                <td style="color:#ffcc00">${lajmi.kategoria}</td>
+                <td><button class="btn-shlyej" onclick="shlyejLajmin(${lajmi.id})">SHLYEJ</button></td>
+            `;
+        });
+    }
+
+    function shlyejLajmin(id) {
+        if(confirm("A jeni i sigurt që dëshironi ta shlyeni?")) {
+            let arkiva = JSON.parse(localStorage.getItem('lajmetDrenas')) || [];
+            arkiva = arkiva.filter(l => l.id !== id);
+            localStorage.setItem('lajmetDrenas', JSON.stringify(arkiva));
+            shfaqLajmet();
+        }
+    }
+
     function searchFunction() {
-        let input = document.getElementById('searchInput').value.toLowerCase();
-        let rows = document.getElementById('listaLajmeve').getElementsByTagName('tr');
-
-        for (let i = 0; i < rows.length; i++) {
-            let titulliLajmit = rows[i].getElementsByTagName('td')[1].innerText.toLowerCase();
-            if (titulliLajmit.includes(input)) {
-                rows[i].style.display = "";
-            } else {
-                rows[i].style.display = "none";
-            }
-        }
-    }
-
-    // Event listener për tastin Enter në Search
-    document.getElementById("searchInput").addEventListener("keyup", function(event) {
-        if (event.key === "Enter") {
-            searchFunction();
-        }
-    });
-
-    function shlyejLajmin(btn) {
-        if(confirm("A jeni i sigurt që dëshironi ta shlyeni këtë lajm?")) {
-            let row = btn.parentNode.parentNode;
-            row.parentNode.removeChild(row);
+        let filter = document.getElementById('searchInput').value.toLowerCase();
+        let rreshtat = document.getElementById('listaLajmeve').getElementsByTagName('tr');
+        for (let i = 0; i < rreshtat.length; i++) {
+            let titulli = rreshtat[i].getElementsByTagName('td')[1].innerText.toLowerCase();
+            rreshtat[i].style.display = titulli.includes(filter) ? "" : "none";
         }
     }
 </script>
