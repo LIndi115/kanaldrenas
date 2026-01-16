@@ -6,141 +6,99 @@
     <title>Admin Panel | KANAL DRENAS</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
         :root { 
             --kuqe: #a51d2d; 
-            --kuqe-hover: #801622;
-            --zi: #121212; 
+            --kuqe-shkelqim: #ce2a3c;
+            --zi-fond: #0b0b0b; 
+            --zi-kart: #161616;
+            --zi-input: #222222;
             --bardhe: #ffffff;
-            --gri-lehte: #f4f7f6;
+            --tekst-gri: #94a3b8;
+            --border: #2d2d2d;
         }
 
         body { 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            background-color: var(--gri-lehte); 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--zi-fond); 
+            color: var(--bardhe); 
             margin: 0; 
-            overflow-x: hidden;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh;
         }
 
-        /* --- LOGIN DESIGN MODERN --- */
+        /* --- LOGIN DESIGN --- */
         #login-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--zi) 0%, #2c3e50 100%);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10000;
+            position: fixed; inset: 0; background: var(--zi-fond);
+            display: flex; align-items: center; justify-content: center; z-index: 10000;
         }
-
         .login-card {
-            background: var(--bardhe);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            border-top: 5px solid var(--kuqe);
+            background: var(--zi-kart); padding: 40px; border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); width: 100%; max-width: 400px;
+            border: 1px solid var(--border); text-align: center;
         }
+        .login-card h2 { font-weight: 800; font-size: 28px; letter-spacing: -1px; margin-bottom: 10px; }
+        .login-card h2 span { color: var(--kuqe); }
 
-        .login-card h2 {
-            margin: 0 0 10px 0;
-            color: var(--zi);
-            font-size: 24px;
-            text-transform: uppercase;
-            font-weight: 900;
-        }
-
-        .login-card p {
-            color: #777;
-            font-size: 14px;
-            margin-bottom: 30px;
-        }
-
-        .input-group {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--zi);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #eee;
-            border-radius: 8px;
-            font-size: 15px;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: var(--kuqe);
-            outline: none;
-            background: #fffdfd;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 15px;
-            background: var(--kuqe);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-login:hover {
-            background: var(--kuqe-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(165, 29, 45, 0.3);
-        }
-
-        #errorMsg {
-            color: #d93025;
-            font-size: 13px;
-            margin-top: 15px;
-            display: none;
-            font-weight: bold;
-        }
-
-        /* --- ADMIN PANEL STYLE --- */
-        #admin-content { display: none; padding: 20px; }
+        /* --- ADMIN CONTENT --- */
+        #admin-content { display: none; width: 100%; max-width: 1100px; padding: 40px 20px; }
         .container { 
-            max-width: 1100px; margin: 30px auto; background: white; 
-            padding: 30px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.05);
-            border-top: 6px solid var(--kuqe);
+            background: var(--zi-kart); padding: 40px; 
+            border-radius: 24px; border: 1px solid var(--border);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
         }
         
-        .header-panel { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 30px; }
-        .header-panel h1 { margin: 0; font-size: 22px; text-transform: uppercase; }
-        .header-panel h1 span { color: var(--kuqe); }
-        .btn-logout { background: #eee; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #555; }
+        .header-panel { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+        }
+        .header-panel h1 { font-size: 24px; font-weight: 800; margin: 0; }
+        .header-panel span { color: var(--kuqe); }
 
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
         .full { grid-column: span 2; }
         
-        label.field-label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #444; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        label { display: block; margin-bottom: 10px; font-size: 12px; color: var(--tekst-gri); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .form-control { 
+            width: 100%; padding: 14px 18px; background: var(--zi-input); 
+            border: 1px solid var(--border); border-radius: 12px; color: white; 
+            box-sizing: border-box; font-size: 15px; transition: 0.2s;
+        }
+        .form-control:focus { border-color: var(--kuqe); outline: none; box-shadow: 0 0 0 4px rgba(165, 29, 45, 0.1); }
 
-        .btn-post { background: var(--kuqe); color: white; padding: 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; margin-top: 25px; text-transform: uppercase; }
+        /* FILE WRAPPER ME BUTONIN X */
+        .file-wrapper { position: relative; display: flex; align-items: center; gap: 10px; }
+        .btn-anulo {
+            display: none; background: #333; color: white; border: none; 
+            padding: 14px; border-radius: 12px; cursor: pointer; font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn-anulo:hover { background: var(--kuqe); }
 
+        .btn-post { 
+            background: var(--kuqe); color: white; padding: 18px; 
+            border: none; border-radius: 12px; cursor: pointer; 
+            font-weight: 700; width: 100%; font-size: 16px; margin-top: 30px;
+            text-transform: uppercase; transition: 0.3s; letter-spacing: 1px;
+        }
+        .btn-post:hover { background: var(--kuqe-shkelqim); transform: translateY(-2px); }
+
+        /* TABLE STYLING */
         .table-section { margin-top: 50px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: left; }
-        th { color: var(--kuqe); text-transform: uppercase; font-size: 12px; }
-        .btn-delete { background: #ff4d4d; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        th { text-align: left; padding: 15px; color: var(--tekst-gri); font-size: 12px; text-transform: uppercase; }
+        td { background: var(--zi-input); padding: 15px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        td:first-child { border-left: 1px solid var(--border); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        td:last-child { border-right: 1px solid var(--border); border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+        
+        .preview-img { width: 55px; height: 40px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
+        .btn-delete { color: #ef4444; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-delete:hover { background: #ef4444; color: white; }
+
+        .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--tekst-gri); padding: 8px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .btn-logout:hover { color: white; border-color: white; }
     </style>
 </head>
 <body>
@@ -148,61 +106,78 @@
 <div id="login-overlay">
     <div class="login-card">
         <h2>KANAL <span>DRENAS</span></h2>
-        <p>Hyrja në Sistemin e Administrimit</p>
-        
-        <div class="input-group">
-            <label>Emri i Përdoruesit</label>
-            <input type="text" id="userInput" placeholder="p.sh. admin">
-        </div>
-
-        <div class="input-group">
+        <div style="text-align: left;">
+            <label>Përdoruesi</label>
+            <input type="text" id="userInput" class="form-control" placeholder="admin" style="margin-bottom: 20px;">
             <label>Fjalëkalimi</label>
-            <input type="password" id="passInput" placeholder="••••••••">
+            <input type="password" id="passInput" class="form-control" placeholder="••••••••">
         </div>
-
-        <button class="btn-login" onclick="kyqu()">Hyr në Panel</button>
-        <div id="errorMsg">Të dhënat janë të gabuara!</div>
+        <button class="btn-post" onclick="kyqu()">Kyqu në Panel</button>
+        <p id="errorMsg" style="color: #ef4444; font-size: 13px; display: none; margin-top: 20px; font-weight: 600;">Të dhënat nuk përputhen!</p>
     </div>
 </div>
 
 <div id="admin-content">
     <div class="container">
         <div class="header-panel">
-            <h1>KANAL <span>DRENAS</span> | ADMIN</h1>
-            <button class="btn-logout" onclick="dil()">DIL</button>
+            <h1>PANELI <span>ADMIN</span></h1>
+            <button class="btn-logout" onclick="dil()">Çkyqu</button>
         </div>
 
         <div class="form-grid">
             <div class="full">
-                <label class="field-label">Titulli i Lajmit</label>
-                <input type="text" id="title" class="form-control" placeholder="Shkruaj titullin...">
+                <label>Titulli i Lajmit</label>
+                <input type="text" id="title" class="form-control" placeholder="Shkruaj titullin këtu...">
             </div>
+
             <div>
-                <label class="field-label">Foto (URL ose File)</label>
+                <label>Ngarko Foto/Video nga pajisja</label>
+                <div class="file-wrapper">
+                    <input type="file" id="mediaFile" class="form-control" accept="image/*,video/*" onchange="shfaqAnulo()">
+                    <button id="btnX" class="btn-anulo" onclick="pastroFile()">X</button>
+                </div>
+            </div>
+
+            <div>
+                <label>URL e Fotos (Opsionale)</label>
                 <input type="text" id="mediaURL" class="form-control" placeholder="https://...">
             </div>
+
+            <div class="full">
+                <label>Linku i Videos (YouTube)</label>
+                <input type="text" id="videoURL" class="form-control" placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+            
             <div>
-                <label class="field-label">Kategoria</label>
+                <label>Autori (Gazetari)</label>
+                <input type="text" id="author" class="form-control" placeholder="Emri i gazetarit...">
+            </div>
+
+            <div>
+                <label>Kategoria</label>
                 <select id="category" class="form-control">
                     <option value="KRYESORE">Kryesore</option>
                     <option value="DRENICA">Drenica</option>
+                    <option value="DIASPORA">Diaspora</option>
                     <option value="SPORT">Sport</option>
                     <option value="SHOWBIZ">Showbiz</option>
                 </select>
             </div>
+
             <div class="full">
-                <label class="field-label">Përmbajtja e Lajmit</label>
-                <textarea id="content" class="form-control" rows="6" placeholder="Shkruaj lajmin e plotë..."></textarea>
+                <label>Përmbajtja e Plotë</label>
+                <textarea id="content" class="form-control" rows="8" placeholder="Shkruaj lajmin e plotë këtu..."></textarea>
             </div>
         </div>
 
-        <button class="btn-post" onclick="pergatitLajmin()">Publiko Lajmin Tani</button>
+        <button class="btn-post" onclick="pergatitLajmin()">PUBLIKO LAJMIN</button>
 
         <div class="table-section">
-            <h3>Lajmet e fundit</h3>
+            <label>Menaxhimi i Lajmeve</label>
             <table>
                 <thead>
                     <tr>
+                        <th>Media</th>
                         <th>Titulli</th>
                         <th>Kategoria</th>
                         <th>Veprimi</th>
@@ -215,7 +190,6 @@
 </div>
 
 <script>
-    // Konfigurimi i Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
         authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -228,37 +202,42 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- LOGJIKA E KYÇJES ---
-    const USER_REALE = "admin";
-    const PASS_REALE = "drenas2026";
-
     function kyqu() {
         const u = document.getElementById('userInput').value;
         const p = document.getElementById('passInput').value;
-        const error = document.getElementById('errorMsg');
-
-        if(u === USER_REALE && p === PASS_REALE) {
+        if(u === "admin" && p === "drenas2026") {
             document.getElementById('login-overlay').style.display = "none";
             document.getElementById('admin-content').style.display = "block";
-            sessionStorage.setItem("kycur", "po");
+            sessionStorage.setItem("logged", "true");
         } else {
-            error.style.display = "block";
-            setTimeout(() => { error.style.display = "none"; }, 3000);
+            document.getElementById('errorMsg').style.display = "block";
         }
     }
 
-    // Mbaje kyçur nëse bën refresh
-    if(sessionStorage.getItem("kycur") === "po") {
+    if(sessionStorage.getItem("logged") === "true") {
         document.getElementById('login-overlay').style.display = "none";
         document.getElementById('admin-content').style.display = "block";
     }
 
-    function dil() {
-        sessionStorage.clear();
-        location.reload();
+    function dil() { sessionStorage.clear(); location.reload(); }
+
+    function shfaqAnulo() { document.getElementById('btnX').style.display = "block"; }
+    function pastroFile() { 
+        document.getElementById('mediaFile').value = ""; 
+        document.getElementById('btnX').style.display = "none"; 
     }
 
-    // --- FUNKSIONET E DATABASE ---
+    // Konvertimi i YouTube linkut
+    function ktheNeEmbed(url) {
+        if (!url) return "";
+        let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        let match = url.match(regExp);
+        if (match && match[2].length == 11) {
+            return "https://www.youtube.com/embed/" + match[2];
+        }
+        return url;
+    }
+
     db.ref('lajmet').on('value', (snap) => {
         const lista = document.getElementById('listaLajmeve');
         lista.innerHTML = "";
@@ -266,37 +245,51 @@
             const l = child.val();
             lista.innerHTML = `
                 <tr>
-                    <td>${l.titulli}</td>
-                    <td><b>${l.kategoria}</b></td>
+                    <td><img src="${l.foto}" class="preview-img" onerror="this.src='https://via.placeholder.com/50'"></td>
+                    <td style="font-weight:600; font-size:14px;">${l.titulli}</td>
+                    <td><b style="color:var(--kuqe)">${l.kategoria}</b></td>
                     <td><button class="btn-delete" onclick="fshij('${child.key}')">Fshij</button></td>
                 </tr>
             ` + lista.innerHTML;
         });
     });
 
-    function pergatitLajmin() {
+    async function pergatitLajmin() {
         const t = document.getElementById('title').value;
+        const a = document.getElementById('author').value;
         const c = document.getElementById('content').value;
         const k = document.getElementById('category').value;
-        const f = document.getElementById('mediaURL').value;
+        const mURL = document.getElementById('mediaURL').value;
+        const vURL = document.getElementById('videoURL').value;
+        const file = document.getElementById('mediaFile').files[0];
 
-        if(!t || !c) { alert("Plotësoni fushat!"); return; }
+        if(!t || !c) return alert("Titulli dhe përmbajtja nuk duhet të jenë zbrazët!");
 
+        const videoEmbed = ktheNeEmbed(vURL);
+        let foto = mURL || "https://via.placeholder.com/800x450?text=KANAL+DRENAS";
+
+        if(file) {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => dergo(t, a, c, k, reader.result, videoEmbed);
+        } else {
+            dergo(t, a, c, k, foto, videoEmbed);
+        }
+    }
+
+    function dergo(t, a, c, k, f, v) {
         db.ref('lajmet').push({
-            titulli: t,
-            pershkrimi: c,
-            kategoria: k,
-            foto: f || "https://via.placeholder.com/400x250",
+            titulli: t, autor: a || "Redaksia",
+            pershkrimi: c, kategoria: k,
+            foto: f, video: v || "",
             data: new Date().toISOString()
         }).then(() => {
-            alert("U publikua!");
+            alert("Lajmi u postua me sukses!");
             location.reload();
         });
     }
 
-    function fshij(id) {
-        if(confirm("Ta fshijmë këtë lajm?")) db.ref('lajmet/' + id).remove();
-    }
+    function fshij(id) { if(confirm("A jeni të sigurt?")) db.ref('lajmet/' + id).remove(); }
 </script>
 </body>
 </html>
