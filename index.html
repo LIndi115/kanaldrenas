@@ -10,72 +10,148 @@
 
     <style>
         :root { 
-            --primare: #c0392b; 
-            --zi: #1a1a1a; 
+            --kuqe-drenice: #a51d2d; /* E kuqe e pasur, profesionale */
+            --zi-tekst: #1a1a1a; 
             --bardhe: #ffffff;
-            --gri-sfond: #f4f4f4;
-            --gri-tekst: #444;
-            --border: #ececec;
+            --gri-sfond: #f8f9fa;
+            --gri-tekst: #555555;
+            --border: #eeeeee;
         }
 
-        body { background: var(--gri-sfond); color: var(--zi); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        body { 
+            background: var(--gri-sfond); 
+            color: var(--zi-tekst); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; 
+        }
         
-        header { background: var(--bardhe); border-bottom: 4px solid var(--primare); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header-top { padding: 15px; text-align: center; }
-        .logo { font-size: 32px; font-weight: 800; text-transform: uppercase; text-decoration: none; color: var(--zi); }
-        .logo span { color: var(--primare); }
+        /* HEADER */
+        header { 
+            background: var(--bardhe); 
+            border-bottom: 5px solid var(--kuqe-drenice); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+        .header-top { padding: 25px 15px; text-align: center; }
+        .logo { 
+            font-size: 38px; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            text-decoration: none; 
+            color: var(--zi-tekst); 
+            letter-spacing: -1.5px;
+        }
+        .logo span { color: var(--kuqe-drenice); }
         
-        nav { background: var(--zi); display: flex; justify-content: center; flex-wrap: wrap; }
-        nav a { color: white; text-decoration: none; padding: 14px 18px; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
-        nav a:hover { background: var(--primare); }
+        /* NAVIGACIONI */
+        nav { 
+            background: #111111; 
+            display: flex; 
+            justify-content: center; 
+            flex-wrap: wrap;
+        }
+        nav a { 
+            color: #eeeeee; 
+            text-decoration: none; 
+            padding: 15px 25px; 
+            font-size: 13px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            transition: 0.3s; 
+        }
+        nav a:hover { color: var(--bardhe); background: var(--kuqe-drenice); }
 
-        .search-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; display: flex; justify-content: flex-end; }
-        #searchInput { width: 100%; max-width: 300px; padding: 10px 15px; border-radius: 4px; border: 1px solid #ddd; outline: none; }
+        /* SEARCH SECTION */
+        .search-container { max-width: 1200px; margin: 30px auto 10px; padding: 0 15px; display: flex; justify-content: flex-end; }
+        #searchInput { 
+            width: 100%; max-width: 350px; padding: 12px 20px; 
+            border-radius: 30px; border: 1px solid #ddd; 
+            background: white; outline: none; transition: 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        #searchInput:focus { border-color: var(--kuqe-drenice); box-shadow: 0 0 10px rgba(165, 29, 45, 0.1); }
 
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; min-height: 600px; }
-        .section-title { border-bottom: 3px solid var(--primare); display: inline-block; padding-bottom: 5px; margin-bottom: 30px; text-transform: uppercase; font-size: 22px; }
+        /* KONTENTI */
+        .container { max-width: 1200px; margin: 20px auto 60px; padding: 0 15px; min-height: 600px; }
+        .section-title { 
+            font-size: 26px; font-weight: 800;
+            border-left: 6px solid var(--kuqe-drenice); 
+            padding-left: 15px; margin-bottom: 35px; 
+            text-transform: uppercase; color: #333;
+        }
         
-        .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
-        .card { background: var(--bardhe); border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; }
-        .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); transform: translateY(-3px); }
+        /* GRID LAJMET */
+        .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 35px; }
         
-        .image-container { position: relative; width: 100%; height: 210px; overflow: hidden; }
-        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card { 
+            background: var(--bardhe); 
+            border-radius: 4px; 
+            overflow: hidden; 
+            border: 1px solid var(--border); 
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .card:hover { 
+            transform: translateY(-10px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-color: #ddd;
+        }
         
-        .video-icon { position: absolute; bottom: 10px; left: 10px; background: var(--primare); color: white; padding: 4px 10px; border-radius: 2px; font-size: 12px; font-weight: bold; }
+        .image-container { position: relative; width: 100%; height: 240px; overflow: hidden; }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+        .card:hover img { transform: scale(1.08); }
         
-        .card-content { padding: 18px; flex-grow: 1; }
-        .kat { color: var(--primare); font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        .card h2 { font-size: 19px; margin: 0 0 10px 0; line-height: 1.4; color: var(--zi); }
+        .video-label { 
+            position: absolute; top: 15px; left: 15px; 
+            background: var(--kuqe-drenice); color: white; 
+            padding: 4px 12px; border-radius: 2px; font-size: 11px; font-weight: bold;
+        }
         
-        .meta { font-size: 11px; color: #888; margin-bottom: 15px; display: flex; gap: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .kat { 
+            color: var(--kuqe-drenice); font-size: 12px; font-weight: 800; 
+            text-transform: uppercase; margin-bottom: 10px; display: block;
+        }
+        .card h2 { 
+            font-size: 21px; margin: 0 0 15px 0; line-height: 1.35; 
+            color: var(--zi-tekst); font-weight: 700;
+        }
+        
+        .meta { 
+            font-size: 12px; color: #999; margin-bottom: 15px; 
+            display: flex; gap: 15px; font-weight: 500;
+        }
 
-        .pershkrimi { font-size: 14px; color: var(--gri-tekst); line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* BUTONI I NDRRYSHUAR */
+        .pershkrimi { 
+            font-size: 15px; color: var(--gri-tekst); line-height: 1.6; 
+            margin-bottom: 25px; display: -webkit-box; -webkit-line-clamp: 3; 
+            -webkit-box-orient: vertical; overflow: hidden; 
+        }
+
         .btn-lexo { 
-            display: inline-block;
-            background-color: var(--primare);
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 4px;
-            text-align: center;
-            transition: 0.3s;
+            margin-top: auto;
+            text-decoration: none; color: var(--zi-tekst); 
+            font-size: 13px; font-weight: 800; 
+            text-transform: uppercase; border-bottom: 2px solid var(--kuqe-drenice);
+            padding-bottom: 3px; align-self: flex-start; transition: 0.2s;
         }
-        .btn-lexo:hover { background-color: #a02e22; }
+        .btn-lexo:hover { color: var(--kuqe-drenice); border-bottom-width: 4px; }
 
-        footer { background: var(--zi); color: #ccc; padding: 40px 20px; text-align: center; margin-top: 50px; }
-        .footer-links a { color: #888; text-decoration: none; margin: 0 10px; font-size: 13px; }
+        /* FOOTER */
+        footer { background: #111; color: #777; padding: 60px 20px; text-align: center; margin-top: 50px; }
+        .footer-links { margin-bottom: 25px; }
+        .footer-links a { color: #bbb; text-decoration: none; margin: 0 15px; font-size: 14px; transition: 0.3s; }
+        .footer-links a:hover { color: var(--kuqe-drenice); }
     </style>
 </head>
 <body>
 
     <header>
         <div class="header-top">
-            <a href="index.html" class="logo"><span>KANAL</span> DRENAS</a>
+            <a href="index.html" class="logo">KANAL <span>DRENAS</span></a>
         </div>
         <nav>
             <a href="index.html">Ballina</a>
@@ -94,7 +170,7 @@
     <div class="container">
         <h2 id="titulli-faqes" class="section-title">Lajmet e fundit</h2>
         <div id="lajmet-list" class="lajmi-grid">
-            <p id="loading-text" style="color: #666;">Duke ngarkuar lajmet...</p>
+            <p id="loading-text">Duke ngarkuar lajmet...</p>
         </div>
     </div>
 
@@ -104,7 +180,7 @@
             <a href="kontakti.html">Kontakti</a>
             <a href="privatesia.html">Politika e Privatësisë</a>
         </div>
-        <p>&copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.</p>
+        <p style="font-size: 13px;">&copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.</p>
     </footer>
 
     <script>
@@ -132,7 +208,7 @@
         db.ref('lajmet').on('value', (snap) => {
             teGjithaLajmet = [];
             if(!snap.exists()) {
-                document.getElementById('lajmet-list').innerHTML = "Nuk u gjet asnjë lajm.";
+                document.getElementById('lajmet-list').innerHTML = "<p>Nuk u gjet asnjë lajm.</p>";
                 return;
             }
             snap.forEach((child) => {
@@ -151,7 +227,7 @@
             items.forEach((item) => {
                 const koha = new Date(item.data);
                 const dataFormat = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' });
-                const ikonaVideo = item.video ? `<div class="video-icon">VIDEO</div>` : "";
+                const ikonaVideo = item.video ? `<div class="video-label">VIDEO</div>` : "";
 
                 list.innerHTML += `
                     <div class="card">
@@ -163,11 +239,11 @@
                             <span class="kat">${item.kategoria}</span>
                             <h2>${item.titulli}</h2>
                             <div class="meta">
-                                <span>${item.autor || 'Redaksia'}</span>
+                                <span style="color:#333">${item.autor || 'Redaksia'}</span>
                                 <span>${dataFormat}</span>
                             </div>
                             <p class="pershkrimi">${item.pershkrimi}</p>
-                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">LEXO LAJMIN E PLOTË</a>
+                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">Lexo lajmin e plotë</a>
                         </div>
                     </div>
                 `;
