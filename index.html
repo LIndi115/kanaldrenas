@@ -51,8 +51,21 @@
         .meta { font-size: 11px; color: #888; margin-bottom: 15px; display: flex; gap: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
 
         .pershkrimi { font-size: 14px; color: var(--gri-tekst); line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .btn-lexo { font-size: 12px; font-weight: bold; color: var(--zi); text-decoration: none; border-bottom: 2px solid var(--primare); transition: 0.2s; }
-        .btn-lexo:hover { color: var(--primare); }
+        
+        /* BUTONI I NDRRYSHUAR */
+        .btn-lexo { 
+            display: inline-block;
+            background-color: var(--primare);
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 4px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .btn-lexo:hover { background-color: #a02e22; }
 
         footer { background: var(--zi); color: #ccc; padding: 40px 20px; text-align: center; margin-top: 50px; }
         .footer-links a { color: #888; text-decoration: none; margin: 0 10px; font-size: 13px; }
@@ -95,7 +108,6 @@
     </footer>
 
     <script>
-        // KONFIGURIMI I FIREBASE (I njejti qe ke pasur)
         const firebaseConfig = {
             apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
             authDomain: "herolind-6ca5f.firebaseapp.com",
@@ -117,11 +129,10 @@
             document.getElementById('titulli-faqes').innerText = "Kategoria: " + kategoriaZgjedhur;
         }
 
-        // MARRJA E LAJMEVE
         db.ref('lajmet').on('value', (snap) => {
             teGjithaLajmet = [];
             if(!snap.exists()) {
-                document.getElementById('lajmet-list').innerHTML = "Nuk u gjet asnjë lajm në database.";
+                document.getElementById('lajmet-list').innerHTML = "Nuk u gjet asnjë lajm.";
                 return;
             }
             snap.forEach((child) => {
@@ -131,20 +142,12 @@
                 }
             });
             shfaqLajmet(teGjithaLajmet.reverse());
-        }, (error) => {
-            console.error("Gabim në Firebase:", error);
-            document.getElementById('lajmet-list').innerHTML = "Gabim gjatë lidhjes me databazën. Kontrolloni Rules në Firebase.";
         });
 
         function shfaqLajmet(items) {
             const list = document.getElementById('lajmet-list');
             list.innerHTML = '';
             
-            if(items.length === 0) {
-                list.innerHTML = "<p>Nuk ka lajme në këtë kategori.</p>";
-                return;
-            }
-
             items.forEach((item) => {
                 const koha = new Date(item.data);
                 const dataFormat = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -164,7 +167,7 @@
                                 <span>${dataFormat}</span>
                             </div>
                             <p class="pershkrimi">${item.pershkrimi}</p>
-                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">LEXO MË SHUMË</a>
+                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">LEXO LAJMIN E PLOTË</a>
                         </div>
                     </div>
                 `;
@@ -174,8 +177,7 @@
         function filtroLajmet() {
             const fjalaKyce = document.getElementById('searchInput').value.toLowerCase();
             const lajmetEFiltruara = teGjithaLajmet.filter(lajm => {
-                return lajm.titulli.toLowerCase().includes(fjalaKyce) || 
-                       (lajm.autor && lajm.autor.toLowerCase().includes(fjalaKyce));
+                return lajm.titulli.toLowerCase().includes(fjalaKyce);
             });
             shfaqLajmet(lajmetEFiltruara);
         }
