@@ -3,165 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LAJMI | KANAL DRENAS</title>
+    <title>KANAL DRENAS</title>
     
-    <meta property="og:type" content="article">
-    <meta property="og:url" id="fb-url" content="">
-    <meta property="og:title" id="fb-title" content="KANAL DRENAS">
-    <meta property="og:description" id="fb-desc" content="Lexoni lajmin e plotë në Kanal Drenas">
-    <meta property="og:image" id="fb-img" content="https://lindi115.github.io/kanaldrenas/logo.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="fb:app_id" content="966242223397117">
+    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
-        :root { --verdh: #ffcc00; --zi: #000; --gri: #111; }
-        body { background: var(--zi); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        :root { --kuqe: #a51d2d; --zi: #1a1a1a; --sfond: #f8f9fa; }
         
-        header { background: #1a1a1a; padding: 15px; text-align: center; border-bottom: 2px solid var(--verdh); position: sticky; top: 0; z-index: 1000; }
-        .logo { text-decoration: none; color: white; font-size: 22px; font-weight: bold; text-transform: uppercase; }
-        
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: var(--gri); border-radius: 12px; }
-        
-        h1 { color: var(--verdh); margin-top: 10px; font-size: 28px; line-height: 1.3; }
-        
-        .meta-info { border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; color: #888; font-size: 14px; }
-        .meta-info strong { color: var(--verdh); }
+        /* SHPEJTËSIA: Sfondi i menjëhershëm që të mos "dridhet" faqja */
+        body { 
+            background: var(--sfond); 
+            color: #333; 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 0; 
+            display: block; 
+        }
 
-        .main-img { width: 100%; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        
-        #video-box { margin-top: 25px; background: #000; border-radius: 10px; overflow: hidden; }
-        
-        .content { line-height: 1.8; font-size: 18px; color: #ddd; margin-top: 25px; white-space: pre-wrap; }
-        
-        /* Stili për butonat Share */
-        .share-box { margin-top: 30px; padding: 20px 0; border-top: 1px solid #333; text-align: center; }
-        .share-btn { display: inline-block; padding: 10px 20px; margin: 5px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold; font-size: 14px; transition: 0.3s; }
-        .btn-fb { background: #1877F2; }
-        .btn-wa { background: #25D366; }
-        .share-btn:hover { opacity: 0.8; transform: translateY(-2px); }
+        header { background: #fff; padding: 15px; text-align: center; border-bottom: 4px solid var(--kuqe); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo { text-decoration: none; color: var(--zi); font-size: 24px; font-weight: 900; text-transform: uppercase; }
+        .logo span { color: var(--kuqe); }
 
-        .btn-back { display: inline-block; margin-top: 30px; color: var(--verdh); text-decoration: none; font-weight: bold; border: 1px solid var(--verdh); padding: 10px 20px; border-radius: 5px; transition: 0.3s; }
-        .btn-back:hover { background: var(--verdh); color: black; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; min-height: 400px; }
         
-        footer { text-align: center; padding: 40px; color: #555; font-size: 13px; }
+        /* Skeleton loading: Një efekt gri derisa të vijnë të dhënat */
+        .loading-placeholder { background: #eee; height: 20px; margin-bottom: 10px; border-radius: 4px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        h1 { font-size: 28px; line-height: 1.2; margin-top: 0; }
+        .lajmi-foto { width: 100%; border-radius: 6px; display: none; margin: 20px 0; }
+        .content { font-size: 18px; line-height: 1.7; white-space: pre-line; }
+        
+        .btn-back { display: inline-block; margin-top: 20px; color: var(--kuqe); text-decoration: none; font-weight: bold; font-size: 14px; }
+        footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
     </style>
+
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
 
     <header>
-        <a href="index.html" class="logo">KANAL <span style="background:var(--verdh); color:#000; padding:2px 5px; border-radius:3px;">DRENAS</span></a>
+        <a href="index.html" class="logo">KANAL <span>DRENAS</span></a>
     </header>
 
     <div class="container">
-        <div id="lajmi-full">
-            <h1 id="titulli">Duke u ngarkuar lajmi...</h1>
-            
-            <div class="meta-info">
-                <span id="autor"></span> | <span id="data"></span>
-            </div>
+        <div id="skeleton">
+            <div class="loading-placeholder" style="width: 40%;"></div>
+            <div class="loading-placeholder" style="width: 100%; height: 40px;"></div>
+            <div class="loading-placeholder" style="width: 100%; height: 200px;"></div>
+        </div>
 
-            <img id="foto" class="main-img" src="" alt="" style="display:none;">
-            
-            <div id="video-box"></div>
-
-            <div class="content">
-                <p id="teksti"></p>
-            </div>
-
-            <div class="share-box">
-                <p style="color: #888; font-size: 14px; margin-bottom: 10px;">SHPËRNDAJE LAJMIN:</p>
-                <a id="share-fb" href="#" target="_blank" class="share-btn btn-fb">Facebook</a>
-                <a id="share-wa" href="#" target="_blank" class="share-btn btn-wa">WhatsApp</a>
-            </div>
-
-            <a href="index.html" class="btn-back">← KTHEHU TE BALLINA</a>
+        <div id="lajmi-content" style="display:none;">
+            <span id="kat" style="color:var(--kuqe); font-weight:bold; font-size:12px; text-transform:uppercase;"></span>
+            <h1 id="titulli"></h1>
+            <p id="meta" style="font-size:13px; color:#888;"></p>
+            <img id="foto" class="lajmi-foto" alt="Imazhi i lajmit">
+            <div id="pershkrimi" class="content"></div>
+            <div id="video-box" style="margin-top:20px;"></div>
+            <a href="index.html" class="btn-back">← KTHEHU</a>
         </div>
     </div>
 
-    <footer>
-        &copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.
-    </footer>
+    <footer>&copy; 2026 KANAL DRENAS</footer>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
-            authDomain: "herolind-6ca5f.firebaseapp.com",
-            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "herolind-6ca5f",
-            storageBucket: "herolind-6ca5f.appspot.com",
-            messagingSenderId: "893085364638",
-            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
-        };
-        firebase.initializeApp(firebaseConfig);
+        // Funksioni që ekzekutohet vetëm pasi faqja është gati
+        window.onload = function() {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
+                authDomain: "herolind-6ca5f.firebaseapp.com",
+                databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
+                projectId: "herolind-6ca5f",
+                storageBucket: "herolind-6ca5f.appspot.com",
+                messagingSenderId: "893085364638",
+                appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
+            };
 
-        function merrYoutubeID(url) {
-            if (!url) return null;
-            let videoId = "";
-            if (url.includes("v=")) {
-                videoId = url.split('v=')[1].split('&')[0];
-            } else if (url.includes("youtu.be/")) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes("embed/")) {
-                videoId = url.split('embed/')[1];
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
             }
-            return videoId;
-        }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const lajmiId = urlParams.get('id');
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
 
-        if(lajmiId) {
-            firebase.database().ref('lajmet/' + lajmiId).on('value', (snap) => {
-                const data = snap.val();
-                if(data) {
-                    document.getElementById('titulli').innerText = data.titulli;
-                    document.title = data.titulli + " | KANAL DRENAS";
-                    document.getElementById('teksti').innerText = data.pershkrimi;
+            if (id) {
+                firebase.database().ref('lajmet/' + id).once('value').then((snap) => {
+                    const data = snap.val();
+                    if (data) {
+                        document.getElementById('skeleton').style.display = "none";
+                        document.getElementById('lajmi-content').style.display = "block";
+                        
+                        document.getElementById('titulli').innerText = data.titulli;
+                        document.getElementById('kat').innerText = data.kategoria;
+                        document.getElementById('pershkrimi').innerText = data.pershkrimi;
+                        document.title = data.titulli;
 
-                    // Përditëso Meta Tags për Facebook
-                    document.getElementById('fb-title').setAttribute('content', data.titulli);
-                    document.getElementById('fb-desc').setAttribute('content', data.pershkrimi.substring(0, 150) + "...");
-                    document.getElementById('fb-url').setAttribute('content', window.location.href);
-
-                    if(data.foto) {
-                        document.getElementById('fb-img').setAttribute('content', data.foto);
-                        const imgTag = document.getElementById('foto');
-                        imgTag.src = data.foto;
-                        imgTag.style.display = "block";
-                    }
-
-                    // Aktivizo butonat e shpërndarjes
-                    const shareUrl = encodeURIComponent(window.location.href);
-                    const shareTitle = encodeURIComponent(data.titulli);
-                    document.getElementById('share-fb').href = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`;
-                    document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${shareTitle}%20${shareUrl}`;
-
-                    const koha = new Date(data.data);
-                    document.getElementById('autor').innerHTML = "Nga: <strong>" + (data.autor || "Redaksia") + "</strong>";
-                    document.getElementById('data').innerText = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'long', year: 'numeric' });
-
-                    if(data.video && data.video.trim() !== "") {
-                        const vId = merrYoutubeID(data.video);
-                        if(vId) {
-                            document.getElementById('video-box').innerHTML = `
-                                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
-                                    <iframe 
-                                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" 
-                                        src="https://www.youtube.com/embed/${vId}" 
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                        allowfullscreen>
-                                    </iframe>
-                                </div>`;
+                        if (data.foto) {
+                            const img = document.getElementById('foto');
+                            img.src = data.foto;
+                            img.style.display = "block";
                         }
+                        
+                        document.getElementById('meta').innerText = `Nga: ${data.autor || 'Redaksia'} | ${new Date(data.data).toLocaleDateString('sq-AL')}`;
                     }
-                }
-            });
-        } else {
-            window.location.href = "index.html";
-        }
+                });
+            }
+        };
     </script>
 </body>
 </html>
