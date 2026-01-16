@@ -1,155 +1,184 @@
-<style>
-    :root { 
-        --primare: #c0392b; /* E kuqe profesionale për lajme */
-        --zi: #1a1a1a; 
-        --bardhe: #ffffff;
-        --gri-sfond: #f4f4f4;
-        --gri-tekst: #444;
-        --border: #ececec;
-    }
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KANAL DRENAS | Portali Informativ</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    body { 
-        background: var(--gri-sfond); 
-        color: var(--zi); 
-        font-family: 'Helvetica Neue', Arial, sans-serif; 
-        margin: 0; 
-    }
-    
-    /* HEADER & NAV */
-    header { 
-        background: var(--bardhe); 
-        border-bottom: 4px solid var(--primare); 
-        position: sticky; 
-        top: 0; 
-        z-index: 1000; 
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    
-    .header-top { padding: 15px; text-align: center; }
-    
-    .logo { 
-        font-size: 35px; 
-        font-weight: 800; 
-        text-transform: uppercase; 
-        text-decoration: none; 
-        color: var(--zi); 
-        letter-spacing: -1px;
-    }
-    .logo span { color: var(--primare); }
-    
-    nav { 
-        background: var(--zi); 
-        display: flex; 
-        justify-content: center; 
-        flex-wrap: wrap; 
-    }
-    nav a { 
-        color: white; 
-        text-decoration: none; 
-        padding: 14px 20px; 
-        font-size: 13px; 
-        font-weight: 600; 
-        text-transform: uppercase; 
-        transition: 0.3s; 
-    }
-    nav a:hover { background: var(--primare); color: white; }
+    <style>
+        :root { 
+            --primare: #c0392b; 
+            --zi: #1a1a1a; 
+            --bardhe: #ffffff;
+            --gri-sfond: #f4f4f4;
+            --gri-tekst: #444;
+            --border: #ececec;
+        }
 
-    /* SEKSIONI SEARCH */
-    .search-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-    #searchInput { 
-        width: 100%; max-width: 350px; padding: 10px 20px; 
-        border-radius: 4px; border: 1px solid #ddd; 
-        background: white; color: var(--zi); outline: none;
-    }
+        body { background: var(--gri-sfond); color: var(--zi); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; }
+        
+        header { background: var(--bardhe); border-bottom: 4px solid var(--primare); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-top { padding: 15px; text-align: center; }
+        .logo { font-size: 32px; font-weight: 800; text-transform: uppercase; text-decoration: none; color: var(--zi); }
+        .logo span { color: var(--primare); }
+        
+        nav { background: var(--zi); display: flex; justify-content: center; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; padding: 14px 18px; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        nav a:hover { background: var(--primare); }
 
-    /* CONTAINER */
-    .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; }
-    .section-title { 
-        font-size: 24px;
-        border-bottom: 3px solid var(--primare); 
-        display: inline-block;
-        padding-bottom: 5px;
-        margin-bottom: 30px; 
-        text-transform: uppercase; 
-    }
-    
-    /* LAJMI GRID */
-    .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
-    
-    .card { 
-        background: var(--bardhe); 
-        border-radius: 0px; /* Portalet serioze nuk përdorin rrumbullakim të madh */
-        overflow: hidden; 
-        border: 1px solid var(--border); 
-        transition: 0.3s; 
-        display: flex; 
-        flex-direction: column; 
-    }
-    .card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
-    
-    .image-container { position: relative; width: 100%; height: 230px; overflow: hidden; }
-    .card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-    .card:hover img { transform: scale(1.05); }
-    
-    .video-icon { 
-        position: absolute; bottom: 10px; left: 10px; 
-        background: var(--primare); color: white; 
-        padding: 5px 12px; border-radius: 2px; font-size: 14px; font-weight: bold;
-    }
-    
-    .card-content { padding: 20px; flex-grow: 1; }
-    
-    .kat { 
-        color: var(--primare); 
-        font-size: 12px; 
-        font-weight: 700; 
-        text-transform: uppercase; 
-        display: block;
-        margin-bottom: 8px;
-    }
-    
-    .card h2 { 
-        font-size: 20px; 
-        margin: 0 0 12px 0; 
-        line-height: 1.3; 
-        color: var(--zi); 
-        font-weight: 700;
-    }
-    
-    .meta { 
-        font-size: 12px; 
-        color: #888; 
-        margin-bottom: 15px; 
-        display: flex; 
-        gap: 15px;
-    }
+        .search-container { max-width: 1200px; margin: 20px auto; padding: 0 15px; display: flex; justify-content: flex-end; }
+        #searchInput { width: 100%; max-width: 300px; padding: 10px 15px; border-radius: 4px; border: 1px solid #ddd; outline: none; }
 
-    .pershkrimi { 
-        font-size: 15px; 
-        color: var(--gri-tekst); 
-        line-height: 1.6; 
-        margin-bottom: 20px;
-    }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 15px; min-height: 600px; }
+        .section-title { border-bottom: 3px solid var(--primare); display: inline-block; padding-bottom: 5px; margin-bottom: 30px; text-transform: uppercase; font-size: 22px; }
+        
+        .lajmi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .card { background: var(--bardhe); border: 1px solid var(--border); transition: 0.3s; display: flex; flex-direction: column; }
+        .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); transform: translateY(-3px); }
+        
+        .image-container { position: relative; width: 100%; height: 210px; overflow: hidden; }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .video-icon { position: absolute; bottom: 10px; left: 10px; background: var(--primare); color: white; padding: 4px 10px; border-radius: 2px; font-size: 12px; font-weight: bold; }
+        
+        .card-content { padding: 18px; flex-grow: 1; }
+        .kat { color: var(--primare); font-size: 11px; font-weight: bold; text-transform: uppercase; display: block; margin-bottom: 8px; }
+        .card h2 { font-size: 19px; margin: 0 0 10px 0; line-height: 1.4; color: var(--zi); }
+        
+        .meta { font-size: 11px; color: #888; margin-bottom: 15px; display: flex; gap: 10px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
 
-    .btn-lexo { 
-        font-size: 13px;
-        font-weight: bold;
-        color: var(--zi);
-        text-decoration: none;
-        border-bottom: 2px solid var(--primare);
-        align-self: flex-start;
-        padding-bottom: 2px;
-        transition: 0.3s;
-    }
-    .btn-lexo:hover { color: var(--primare); }
+        .pershkrimi { font-size: 14px; color: var(--gri-tekst); line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .btn-lexo { font-size: 12px; font-weight: bold; color: var(--zi); text-decoration: none; border-bottom: 2px solid var(--primare); transition: 0.2s; }
+        .btn-lexo:hover { color: var(--primare); }
 
-    footer { 
-        background: var(--zi); 
-        color: white;
-        padding: 60px 20px; 
-        text-align: center; 
-        margin-top: 50px; 
-    }
-    .footer-links a { color: #bbb; text-decoration: none; margin: 0 15px; font-size: 14px; }
-    .footer-links a:hover { color: var(--primare); }
-</style>
+        footer { background: var(--zi); color: #ccc; padding: 40px 20px; text-align: center; margin-top: 50px; }
+        .footer-links a { color: #888; text-decoration: none; margin: 0 10px; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <a href="index.html" class="logo"><span>KANAL</span> DRENAS</a>
+        </div>
+        <nav>
+            <a href="index.html">Ballina</a>
+            <a href="?kat=KRYESORE">Kryesore</a>
+            <a href="?kat=DRENICA">Drenica</a>
+            <a href="?kat=SPORT">Sport</a>
+            <a href="?kat=SHOWBIZ">Showbiz</a>
+            <a href="?kat=DIASPORA">Diaspora</a>
+        </nav>
+    </header>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" onkeyup="filtroLajmet()" placeholder="Kërko lajme...">
+    </div>
+
+    <div class="container">
+        <h2 id="titulli-faqes" class="section-title">Lajmet e fundit</h2>
+        <div id="lajmet-list" class="lajmi-grid">
+            <p id="loading-text" style="color: #666;">Duke ngarkuar lajmet...</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="rreth-nesh.html">Rreth Nesh</a>
+            <a href="kontakti.html">Kontakti</a>
+            <a href="privatesia.html">Politika e Privatësisë</a>
+        </div>
+        <p>&copy; 2026 KANAL DRENAS. Të gjitha të drejtat e rezervuara.</p>
+    </footer>
+
+    <script>
+        // KONFIGURIMI I FIREBASE (I njejti qe ke pasur)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
+            authDomain: "herolind-6ca5f.firebaseapp.com",
+            databaseURL: "https://herolind-6ca5f-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "herolind-6ca5f",
+            storageBucket: "herolind-6ca5f.appspot.com",
+            messagingSenderId: "893085364638",
+            appId: "1:893085364638:web:2db59e6ec72ad7e7c1a68f"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let teGjithaLajmet = [];
+        const urlParams = new URLSearchParams(window.location.search);
+        const kategoriaZgjedhur = urlParams.get('kat');
+
+        if(kategoriaZgjedhur) {
+            document.getElementById('titulli-faqes').innerText = "Kategoria: " + kategoriaZgjedhur;
+        }
+
+        // MARRJA E LAJMEVE
+        db.ref('lajmet').on('value', (snap) => {
+            teGjithaLajmet = [];
+            if(!snap.exists()) {
+                document.getElementById('lajmet-list').innerHTML = "Nuk u gjet asnjë lajm në database.";
+                return;
+            }
+            snap.forEach((child) => {
+                const data = child.val();
+                if(!kategoriaZgjedhur || data.kategoria === kategoriaZgjedhur) {
+                    teGjithaLajmet.push({id: child.key, ...data});
+                }
+            });
+            shfaqLajmet(teGjithaLajmet.reverse());
+        }, (error) => {
+            console.error("Gabim në Firebase:", error);
+            document.getElementById('lajmet-list').innerHTML = "Gabim gjatë lidhjes me databazën. Kontrolloni Rules në Firebase.";
+        });
+
+        function shfaqLajmet(items) {
+            const list = document.getElementById('lajmet-list');
+            list.innerHTML = '';
+            
+            if(items.length === 0) {
+                list.innerHTML = "<p>Nuk ka lajme në këtë kategori.</p>";
+                return;
+            }
+
+            items.forEach((item) => {
+                const koha = new Date(item.data);
+                const dataFormat = koha.toLocaleDateString('sq-AL', { day: 'numeric', month: 'short', year: 'numeric' });
+                const ikonaVideo = item.video ? `<div class="video-icon">VIDEO</div>` : "";
+
+                list.innerHTML += `
+                    <div class="card">
+                        <div class="image-container">
+                            ${ikonaVideo}
+                            <img src="${item.foto}" alt="${item.titulli}">
+                        </div>
+                        <div class="card-content">
+                            <span class="kat">${item.kategoria}</span>
+                            <h2>${item.titulli}</h2>
+                            <div class="meta">
+                                <span>${item.autor || 'Redaksia'}</span>
+                                <span>${dataFormat}</span>
+                            </div>
+                            <p class="pershkrimi">${item.pershkrimi}</p>
+                            <a href="lajmi.html?id=${item.id}" class="btn-lexo">LEXO MË SHUMË</a>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function filtroLajmet() {
+            const fjalaKyce = document.getElementById('searchInput').value.toLowerCase();
+            const lajmetEFiltruara = teGjithaLajmet.filter(lajm => {
+                return lajm.titulli.toLowerCase().includes(fjalaKyce) || 
+                       (lajm.autor && lajm.autor.toLowerCase().includes(fjalaKyce));
+            });
+            shfaqLajmet(lajmetEFiltruara);
+        }
+    </script>
+</body>
+</html>
