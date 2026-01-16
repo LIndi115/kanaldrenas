@@ -11,13 +11,11 @@
     <style>
         :root { --kuqe: #a51d2d; --zi: #1a1a1a; --sfond: #f8f9fa; }
         
-        /* SHPEJTËSIA: Sfondi i menjëhershëm që të mos "dridhet" faqja */
         body { 
             background: var(--sfond); 
             color: #333; 
             font-family: system-ui, -apple-system, sans-serif; 
             margin: 0; 
-            display: block; 
         }
 
         header { background: #fff; padding: 15px; text-align: center; border-bottom: 4px solid var(--kuqe); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
@@ -26,14 +24,20 @@
 
         .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; min-height: 400px; }
         
-        /* Skeleton loading: Një efekt gri derisa të vijnë të dhënat */
         .loading-placeholder { background: #eee; height: 20px; margin-bottom: 10px; border-radius: 4px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-        h1 { font-size: 28px; line-height: 1.2; margin-top: 0; }
+        h1 { font-size: 28px; line-height: 1.2; margin-top: 10px; }
         .lajmi-foto { width: 100%; border-radius: 6px; display: none; margin: 20px 0; }
-        .content { font-size: 18px; line-height: 1.7; white-space: pre-line; }
         
+        /* Stili për videon që të përshtatet në celular */
+        .video-container { 
+            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; 
+            border-radius: 8px; margin: 20px 0; background: #000; display: none;
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+        .content { font-size: 18px; line-height: 1.7; white-space: pre-line; margin-top: 20px; }
         .btn-back { display: inline-block; margin-top: 20px; color: var(--kuqe); text-decoration: none; font-weight: bold; font-size: 14px; }
         footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
     </style>
@@ -51,24 +55,29 @@
         <div id="skeleton">
             <div class="loading-placeholder" style="width: 40%;"></div>
             <div class="loading-placeholder" style="width: 100%; height: 40px;"></div>
-            <div class="loading-placeholder" style="width: 100%; height: 200px;"></div>
+            <div class="loading-placeholder" style="width: 100%; height: 250px;"></div>
         </div>
 
         <div id="lajmi-content" style="display:none;">
             <span id="kat" style="color:var(--kuqe); font-weight:bold; font-size:12px; text-transform:uppercase;"></span>
             <h1 id="titulli"></h1>
             <p id="meta" style="font-size:13px; color:#888;"></p>
+            
+            <div id="video-wrapper" class="video-container">
+                <iframe id="video-iframe" src="" allowfullscreen></iframe>
+            </div>
+
             <img id="foto" class="lajmi-foto" alt="Imazhi i lajmit">
+
             <div id="pershkrimi" class="content"></div>
-            <div id="video-box" style="margin-top:20px;"></div>
-            <a href="index.html" class="btn-back">← KTHEHU</a>
+            
+            <a href="index.html" class="btn-back">← KTHEHU TE BALLINA</a>
         </div>
     </div>
 
     <footer>&copy; 2026 KANAL DRENAS</footer>
 
     <script>
-        // Funksioni që ekzekutohet vetëm pasi faqja është gati
         window.onload = function() {
             const firebaseConfig = {
                 apiKey: "AIzaSyBh_7BwfNbKbscPSW1ZN9Y_UvAntsjl9Wg",
@@ -98,14 +107,24 @@
                         document.getElementById('kat').innerText = data.kategoria;
                         document.getElementById('pershkrimi').innerText = data.pershkrimi;
                         document.title = data.titulli;
-
-                        if (data.foto) {
-                            const img = document.getElementById('foto');
-                            img.src = data.foto;
-                            img.style.display = "block";
-                        }
-                        
                         document.getElementById('meta').innerText = `Nga: ${data.autor || 'Redaksia'} | ${new Date(data.data).toLocaleDateString('sq-AL')}`;
+
+                        const fotoImg = document.getElementById('foto');
+                        const videoWrapper = document.getElementById('video-wrapper');
+                        const videoIframe = document.getElementById('video-iframe');
+
+                        // LOGJIKA E SHFAQJES SË MEDIAS
+                        if (data.video && data.video.includes('youtube.com/embed/')) {
+                            // Nëse ka video, shfaqim videon dhe fshehim foton
+                            videoIframe.src = data.video;
+                            videoWrapper.style.display = "block";
+                            fotoImg.style.display = "none";
+                        } else if (data.foto) {
+                            // Nëse s'ka video por ka foto, shfaqim foton
+                            fotoImg.src = data.foto;
+                            fotoImg.style.display = "block";
+                            videoWrapper.style.display = "none";
+                        }
                     }
                 });
             }
